@@ -8,8 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTC_WRAPPER: sccache
-  SCCACHE_GHA_ENABLED: "true"
+  CARGO_INCREMENTAL: 0
 
 jobs:
   fmt:
@@ -23,20 +22,32 @@ jobs:
         with:
           components: rustfmt
 
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-fmt-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-fmt-
+
+      # build.rs generates src/generated.rs — must exist before fmt runs
+      - name: Generate build artifacts
+        run: cargo build -p uv 2>/dev/null || true
+
       - name: Check formatting
         run: cargo fmt --all -- --check
 
   check:
-    name: Cargo check
+    name: Cargo Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.5
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -45,9 +56,9 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+            target/
+          key: ${{ runner.os }}-cargo-check-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-check-
 
       - name: cargo check
         run: cargo check --workspace --all-targets
@@ -63,9 +74,6 @@ jobs:
         with:
           components: clippy
 
-      - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.5
-
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
@@ -73,9 +81,9 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+            target/
+          key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-clippy-
 
       - name: cargo clippy
         run: cargo clippy --workspace -- -D warnings
@@ -89,9 +97,6 @@ jobs:
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.5
-
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
@@ -99,11 +104,11 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+            target/
+          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-test-
 
-      - name: Compile tests (check only)
+      - name: Compile tests
         run: cargo test --workspace --no-run
 
       - name: Run tests
