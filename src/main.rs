@@ -2,6 +2,7 @@
 #![warn(clippy::pedantic)]
 #![allow(clippy::doc_markdown, clippy::if_not_else, clippy::non_ascii_literal)]
 
+use tracing::{debug, info};
 use uv::benchmark::{Benchmark, NamedTimer};
 use uv::input::{self, Config, Opts, ScriptsRequired};
 use uv::port_strategy::PortStrategy;
@@ -43,7 +44,7 @@ fn main() {
     opts.merge(&config);
 
     // Init structured logging: stderr (human) + storage/logs/ (JSON, daily rotation).
-    let _log_guard = uv::logging::init("storage/logs", opts.verbose as u8);
+    let _log_guard = uv::logging::init("storage/logs", 0u8);
 
     tracing::debug!("Main() `opts` arguments are {opts:?}");
 

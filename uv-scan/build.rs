@@ -1,5 +1,6 @@
 fn main() {
     cc::Build::new()
+        .define("_POSIX_C_SOURCE", "200809L")
         .std("c11")
         .flag_if_supported("-O2")
         .flag_if_supported("-Wall")

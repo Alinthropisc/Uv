@@ -203,7 +203,7 @@ impl VersionProbe for SshProbe {
             (software.to_string(), String::new())
         };
         Some(
-            VersionInfo::new("ssh", product, version)
+            VersionInfo::new("ssh", product, version.clone())
                 .with_cpe(format!("cpe:/a:openbsd:openssh:{version}"))
                 .with_extra(line.to_string()),
         )

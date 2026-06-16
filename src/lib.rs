@@ -51,4 +51,6 @@ pub mod address;
 
 pub mod probe;
 
+pub mod logging;
+
 pub mod generated;

@@ -15,20 +15,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: ${{ matrix.rust }}
-          override: true
 
       - uses: taiki-e/install-action@nextest
       - uses: Swatinem/rust-cache@v2
 
       - name: Install Just
-        uses: extractions/setup-just@v2
+        uses: taiki-e/install-action@just
 
       - name: Run just
         run: just test

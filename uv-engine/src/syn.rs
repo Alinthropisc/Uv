@@ -60,12 +60,7 @@ impl Scanner for SynStealthScanner {
             syn_scan_blocking(src_ip, dst_ip, src_port, &ports_vec, timeout)
         })
         .await
-        .map_err(|e| {
-            UvError::Io(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                e.to_string(),
-            ))
-        })?
+        .map_err(|e| UvError::Io(std::io::Error::other(e.to_string())))?
     }
 }
 

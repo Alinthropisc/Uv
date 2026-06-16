@@ -58,12 +58,7 @@ impl Scanner for IdleScanner {
             idle_scan_blocking(zombie, zombie_port, dst_ip, &ports_vec, timeout_ms)
         })
         .await
-        .map_err(|e| {
-            UvError::Io(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                e.to_string(),
-            ))
-        })?
+        .map_err(|e| UvError::Io(std::io::Error::other(e.to_string())))?
     }
 }
 

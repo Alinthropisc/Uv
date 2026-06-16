@@ -30,11 +30,7 @@ pub fn init(log_dir: impl AsRef<Path>, verbosity: u8) -> LogGuard {
     };
 
     // File appender — daily rotation, storage/logs/uv.YYYY-MM-DD.log
-    let file_appender = RollingFileAppender::new(
-        Rotation::DAILY,
-        log_dir.as_ref(),
-        "uv.log",
-    );
+    let file_appender = RollingFileAppender::new(Rotation::DAILY, log_dir.as_ref(), "uv.log");
     let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
     // File layer — JSON, no color, full timestamps
@@ -44,8 +40,7 @@ pub fn init(log_dir: impl AsRef<Path>, verbosity: u8) -> LogGuard {
         .with_span_events(FmtSpan::CLOSE)
         .with_writer(non_blocking)
         .with_filter(
-            EnvFilter::from_default_env()
-                .add_directive(format!("{base_level}").parse().unwrap()),
+            EnvFilter::from_default_env().add_directive(format!("{base_level}").parse().unwrap()),
         );
 
     // Stderr layer — compact, colored for human reading
@@ -54,8 +49,7 @@ pub fn init(log_dir: impl AsRef<Path>, verbosity: u8) -> LogGuard {
         .with_target(false)
         .with_writer(std::io::stderr)
         .with_filter(
-            EnvFilter::from_env("UV_LOG")
-                .add_directive(format!("{base_level}").parse().unwrap()),
+            EnvFilter::from_env("UV_LOG").add_directive(format!("{base_level}").parse().unwrap()),
         );
 
     tracing_subscriber::registry()

@@ -2,8 +2,6 @@
 // Builds a goto/fail/output automaton at compile time, then matches in O(n) over banner bytes.
 // Used to classify banners into service types without regex overhead.
 
-use std::collections::HashMap;
-
 const GOTO_FAIL: u32 = u32::MAX;
 
 /// A compiled Aho-Corasick automaton.
