@@ -70,7 +70,7 @@ impl ProbeSet {
         }
     }
 
-    pub fn add(mut self, p: impl VersionProbe + 'static) -> Self {
+    pub fn push(mut self, p: impl VersionProbe + 'static) -> Self {
         self.probes.push(Box::new(p));
         self
     }
@@ -158,8 +158,8 @@ impl VersionProbe for HttpProbe {
         let server = text
             .lines()
             .find(|l| l.to_ascii_lowercase().starts_with("server:"))?
-            .splitn(2, ':')
-            .nth(1)?
+            .split_once(':')?
+            .1
             .trim();
         // Split "Apache/2.4.51 (Ubuntu)" → product="Apache", version="2.4.51"
         let (product, version) = if let Some(slash) = server.find('/') {
@@ -311,7 +311,7 @@ impl VersionProbe for RedisProbe {
         let text = std::str::from_utf8(banner).ok()?;
         // redis_version:7.0.11
         let ver_line = text.lines().find(|l| l.starts_with("redis_version:"))?;
-        let version = ver_line.splitn(2, ':').nth(1)?.trim().to_string();
+        let version = ver_line.split_once(':')?.1.trim().to_string();
         Some(
             VersionInfo::new("redis", "Redis", version.clone())
                 .with_cpe(format!("cpe:/a:redis:redis:{version}")),
@@ -342,7 +342,6 @@ impl VersionProbe for PostgresProbe {
         if let Some(pos) = text.find("PostgreSQL") {
             let rest = &text[pos + 10..]; // skip "PostgreSQL"
             let ver = rest
-                .trim_start()
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
@@ -423,7 +422,7 @@ impl VersionProbe for TelnetProbe {
         let text: String = banner
             .iter()
             .skip_while(|&&b| b == 0xff)
-            .filter(|&&b| b >= 0x20 && b < 0x7f)
+            .filter(|&&b| (0x20..0x7f).contains(&b))
             .map(|&b| b as char)
             .collect();
         if text.is_empty() {
@@ -709,7 +708,7 @@ impl VersionProbe for ZookeeperProbe {
     fn extract(&self, banner: &[u8]) -> Option<VersionInfo> {
         let text = std::str::from_utf8(banner).ok()?;
         let ver_line = text.lines().find(|l| l.starts_with("zk_version"))?;
-        let version = ver_line.splitn(2, '\t').nth(1).unwrap_or("").trim();
+        let version = ver_line.split_once('\t').map(|x| x.1).unwrap_or("").trim();
         let short = version.split('-').next().unwrap_or(version);
         Some(VersionInfo::new(
             "zookeeper",
@@ -936,27 +935,27 @@ impl VersionProbe for ImapProbe {
 /// Build the default ProbeSet with all built-in probes.
 pub fn default_probe_set(timeout_ms: u32) -> ProbeSet {
     ProbeSet::new(timeout_ms)
-        .add(SshProbe)
-        .add(FtpProbe)
-        .add(SmtpProbe)
-        .add(HttpProbe)
-        .add(MysqlProbe)
-        .add(RedisProbe)
-        .add(PostgresProbe)
-        .add(TlsProbe)
-        .add(TelnetProbe)
-        .add(RdpProbe)
-        .add(MongoProbe)
-        .add(AmqpProbe)
-        .add(LdapProbe)
-        .add(KafkaProbe)
-        .add(ElasticsearchProbe)
-        .add(ZookeeperProbe)
-        .add(GrpcProbe)
-        .add(WinRmProbe)
-        .add(OracleProbe)
-        .add(MssqlProbe)
-        .add(CassandraProbe)
-        .add(MemcachedProbe)
-        .add(ImapProbe)
+        .push(SshProbe)
+        .push(FtpProbe)
+        .push(SmtpProbe)
+        .push(HttpProbe)
+        .push(MysqlProbe)
+        .push(RedisProbe)
+        .push(PostgresProbe)
+        .push(TlsProbe)
+        .push(TelnetProbe)
+        .push(RdpProbe)
+        .push(MongoProbe)
+        .push(AmqpProbe)
+        .push(LdapProbe)
+        .push(KafkaProbe)
+        .push(ElasticsearchProbe)
+        .push(ZookeeperProbe)
+        .push(GrpcProbe)
+        .push(WinRmProbe)
+        .push(OracleProbe)
+        .push(MssqlProbe)
+        .push(CassandraProbe)
+        .push(MemcachedProbe)
+        .push(ImapProbe)
 }

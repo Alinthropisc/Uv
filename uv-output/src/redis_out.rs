@@ -105,7 +105,7 @@ fn resp_cmd(parts: &[&str]) -> String {
 /// Read and discard one RESP reply ("+OK", ":N", "-ERR ...", etc.).
 fn read_resp_reply(stream: &mut TcpStream) -> std::io::Result<()> {
     let mut buf = [0u8; 256];
-    stream.read(&mut buf)?;
+    stream.read_exact(&mut buf)?;
     Ok(())
 }
 

@@ -2,7 +2,7 @@
 // Provides span macros for pipeline stages and per-host events.
 
 use std::net::IpAddr;
-use tracing::{debug, info, instrument, warn};
+use tracing::{debug, info, warn};
 
 /// Log scan job start with key parameters.
 pub fn log_job_start(targets: usize, ports: usize, rate_pps: u64, timing: &str) {

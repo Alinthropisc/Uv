@@ -14,8 +14,8 @@ impl BannerParser for FtpParser {
             return None;
         }
         let msg = text
-            .splitn(2, |c| c == ' ' || c == '-')
-            .nth(1)
+            .split_once([' ', '-'])
+            .map(|x| x.1)
             .unwrap_or("")
             .trim();
         Some(

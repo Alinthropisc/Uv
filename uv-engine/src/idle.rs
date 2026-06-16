@@ -154,7 +154,9 @@ fn send_spoofed_syn(
     let mut dst_addr: libc::sockaddr_in = unsafe { std::mem::zeroed() };
     dst_addr.sin_family = libc::AF_INET as libc::sa_family_t;
     dst_addr.sin_port = dport.to_be();
-    dst_addr.sin_addr = libc::in_addr { s_addr: u32::from(target).to_be() };
+    dst_addr.sin_addr = libc::in_addr {
+        s_addr: u32::from(target).to_be(),
+    };
 
     unsafe {
         libc::sendto(
@@ -234,7 +236,9 @@ fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u
     let mut dst_addr: libc::sockaddr_in = unsafe { std::mem::zeroed() };
     dst_addr.sin_family = libc::AF_INET as libc::sa_family_t;
     dst_addr.sin_port = zombie_port.to_be();
-    dst_addr.sin_addr = libc::in_addr { s_addr: u32::from(zombie).to_be() };
+    dst_addr.sin_addr = libc::in_addr {
+        s_addr: u32::from(zombie).to_be(),
+    };
     unsafe {
         libc::sendto(
             probe_sock,

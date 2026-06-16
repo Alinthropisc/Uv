@@ -20,7 +20,7 @@ pub enum OutputFormat {
 }
 
 impl OutputFormat {
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn parse(s: &str) -> Option<Self> {
         match s {
             "plain" | "normal" => Some(Self::Plain),
             "greppable" | "grep" | "oG" => Some(Self::Greppable),

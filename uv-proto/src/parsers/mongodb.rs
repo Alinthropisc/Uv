@@ -19,7 +19,7 @@ impl BannerParser for MongoDbParser {
 
         // MongoDB wire protocol message header: messageLength(4) + requestID(4) + responseTo(4) + opCode(4)
         let msg_len = u32::from_le_bytes([banner[0], banner[1], banner[2], banner[3]]) as usize;
-        if msg_len < 16 || msg_len > 48 * 1024 * 1024 {
+        if !(16..=48 * 1024 * 1024).contains(&msg_len) {
             return None;
         }
 

@@ -54,7 +54,7 @@ pub async fn run(job: &ScanJob) -> ScanResult {
         timing.concurrency
     };
     let max_retries = if job.retries > 0 {
-        job.retries as u8
+        job.retries
     } else {
         timing.max_retries
     };
@@ -426,15 +426,10 @@ async fn reverse_dns(ip: IpAddr) -> Option<String> {
         use std::net::ToSocketAddrs;
         // Trick: format as socket addr then resolve — gets PTR via getaddrinfo
         let dummy = format!("{}:0", ip);
-        dummy
-            .to_socket_addrs()
-            .ok()?
-            .next()
-            .map(|_| {
-                // std doesn't expose PTR; use getnameinfo via libc fallback
-                getnameinfo(sa)
-            })
-            .flatten()
+        dummy.to_socket_addrs().ok()?.next().and_then(|_| {
+            // std doesn't expose PTR; use getnameinfo via libc fallback
+            getnameinfo(sa)
+        })
     })
     .await
     .ok()

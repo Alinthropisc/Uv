@@ -83,12 +83,10 @@ impl EventPool {
 async fn drive_iod(iod: Iod) -> IoEvent {
     let dur = Duration::from_millis(iod.timeout_ms);
     match timeout(dur, TcpStream::connect(iod.addr)).await {
-        Err(_) | Ok(Err(_)) => {
-            return IoEvent {
-                addr: iod.addr,
-                kind: IoEventKind::Timeout,
-            };
-        }
+        Err(_) | Ok(Err(_)) => IoEvent {
+            addr: iod.addr,
+            kind: IoEventKind::Timeout,
+        },
         Ok(Ok(mut stream)) => {
             // Send probe if provided
             if let Some(probe) = &iod.probe {

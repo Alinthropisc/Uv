@@ -38,6 +38,7 @@ impl OsDb {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn e(
     name: &str,
     os_class: &str,

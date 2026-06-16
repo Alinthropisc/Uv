@@ -58,7 +58,7 @@ impl ParserChain {
     }
 
     /// Builder-style registration.
-    pub fn add(mut self, p: impl BannerParser + 'static) -> Self {
+    pub fn push(mut self, p: impl BannerParser + 'static) -> Self {
         self.parsers.push(Box::new(p));
         self
     }

@@ -38,10 +38,10 @@ impl ResumeState {
             }
             // format: "ip:port"
             if let Some((ip_s, port_s)) = line.split_once(':') {
-                if let (Ok(ip), Ok(port)) = (ip_s.parse::<IpAddr>(), port_s.parse::<u16>()) {
-                    if let IpAddr::V4(v4) = ip {
-                        state.completed.insert((u32::from(v4), port));
-                    }
+                if let (Ok(IpAddr::V4(v4)), Ok(port)) =
+                    (ip_s.parse::<IpAddr>(), port_s.parse::<u16>())
+                {
+                    state.completed.insert((u32::from(v4), port));
                 }
             }
         }

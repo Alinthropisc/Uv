@@ -5,7 +5,7 @@
 // NEVER runs cargo build/test on weak hardware without user request.
 // These tests are written-only; run manually when hardware allows.
 
-use std::net::{IpAddr, Ipv4Addr, TcpListener, UdpSocket};
+use std::net::{IpAddr, Ipv4Addr, TcpListener};
 use std::thread;
 use std::time::Duration;
 
@@ -25,19 +25,6 @@ fn mock_tcp_server(banner: &'static [u8]) -> u16 {
                 }
                 Err(_) => break,
             }
-        }
-    });
-    port
-}
-
-/// Bind an ephemeral UDP port and echo back a fixed reply to first datagram.
-fn mock_udp_server(reply: &'static [u8]) -> u16 {
-    let sock = UdpSocket::bind("127.0.0.1:0").unwrap();
-    let port = sock.local_addr().unwrap().port();
-    thread::spawn(move || {
-        let mut buf = [0u8; 256];
-        if let Ok((_, src)) = sock.recv_from(&mut buf) {
-            let _ = sock.send_to(reply, src);
         }
     });
     port
@@ -155,7 +142,7 @@ fn smack_detects_ssh_banner() {
 
 #[test]
 fn smack_detects_http_banner() {
-    use uv_proto::smack::{default_banner_smack, ServiceLabel};
+    use uv_proto::smack::default_banner_smack;
 
     let smack = default_banner_smack();
     let banner = b"HTTP/1.1 200 OK\r\nServer: nginx/1.24";
@@ -176,7 +163,7 @@ fn smack_no_false_positive_on_random() {
 #[test]
 fn dedup_removes_duplicate_ports() {
     use std::net::Ipv4Addr;
-    use uv_core::types::port::{Port, PortState};
+    use uv_core::types::port::Port;
     use uv_core::types::protocol::Protocol;
     use uv_core::types::result::{HostResult, ProbeResult, ScanResult};
     use uv_scan::dedup::dedup;
@@ -267,7 +254,7 @@ fn udp_payload_dns_defined() {
 #[test]
 fn binary_roundtrip_ipv4() {
     use std::net::Ipv4Addr;
-    use uv_core::types::port::{Port, PortState};
+    use uv_core::types::port::Port;
     use uv_core::types::protocol::Protocol;
     use uv_core::types::result::{HostResult, ProbeResult, ScanResult};
     use uv_output::binary::{decode_binary, encode_binary, BinaryRecord};

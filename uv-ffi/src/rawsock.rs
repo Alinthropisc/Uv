@@ -1,7 +1,6 @@
 // rawsock.rs — Linux AF_PACKET raw socket abstraction.
 // On non-Linux or without root: falls back gracefully (returns error).
 
-use std::net::Ipv4Addr;
 use uv_core::error::{UvError, UvResult};
 
 /// Capability guard — checks if raw sockets are available.

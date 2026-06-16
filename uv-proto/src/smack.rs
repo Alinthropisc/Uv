@@ -17,6 +17,7 @@ pub struct Smack {
 
 impl Smack {
     /// Build automaton from a list of (pattern_bytes, label) pairs.
+    #[allow(clippy::needless_range_loop)]
     pub fn build(patterns: &[(&[u8], usize)]) -> Self {
         let mut goto: Vec<[u32; 256]> = vec![[GOTO_FAIL; 256]];
         let mut output: Vec<Vec<usize>> = vec![vec![]];

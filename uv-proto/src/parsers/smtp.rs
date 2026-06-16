@@ -17,7 +17,7 @@ impl BannerParser for SmtpParser {
         if port == 21 {
             return None;
         }
-        let msg = text.splitn(2, ' ').nth(1).unwrap_or("").trim();
+        let msg = text.split_once(' ').map(|x| x.1).unwrap_or("").trim();
         let service = if port == 465 { "smtps" } else { "smtp" };
         Some(
             ParsedBanner::new(service)
