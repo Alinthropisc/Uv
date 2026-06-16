@@ -1,0 +1,123 @@
+// MAC OUI vendor lookup — nmap MACLookup.cc style.
+// Built-in table of the top 60 OUI prefixes by prevalence.
+
+/// Look up the vendor name for a MAC address by its first 3 bytes (OUI).
+/// Returns `None` if the OUI is not in the built-in table.
+pub fn oui_vendor(mac: &[u8; 6]) -> Option<&'static str> {
+    let oui = ((mac[0] as u32) << 16) | ((mac[1] as u32) << 8) | (mac[2] as u32);
+    OUI_TABLE
+        .iter()
+        .find(|(prefix, _)| *prefix == oui)
+        .map(|(_, vendor)| *vendor)
+}
+
+/// Format a MAC address as "AA:BB:CC:DD:EE:FF".
+pub fn format_mac(mac: &[u8; 6]) -> String {
+    format!(
+        "{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
+        mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]
+    )
+}
+
+// (OUI u24, vendor name)
+static OUI_TABLE: &[(u32, &str)] = &[
+    (0x000000, "Xerox"),
+    (0x000C29, "VMware"),
+    (0x000D3A, "Microsoft (Azure)"),
+    (0x001050, "Apple"),
+    (0x001122, "Cimsys"),
+    (0x0016CB, "Apple"),
+    (0x001A11, "Google"),
+    (0x001C42, "Parallels"),
+    (0x001E67, "Dell"),
+    (0x00224D, "Yamaha"),
+    (0x002248, "Cisco"),
+    (0x00238B, "Cisco"),
+    (0x0026B9, "Dell"),
+    (0x002590, "Super Micro Computer"),
+    (0x002655, "TP-Link"),
+    (0x0050F2, "Microsoft"),
+    (0x005056, "VMware"),
+    (0x006400, "Cisco"),
+    (0x0090F5, "HP"),
+    (0x00A040, "Apple"),
+    (0x00D0B7, "Intel"),
+    (0x00E04C, "Realtek"),
+    (0x00E08F, "Cisco"),
+    (0x040EC0, "Huawei"),
+    (0x086266, "Amazon (AWS)"),
+    (0x0C5415, "Samsung"),
+    (0x0C8112, "Apple"),
+    (0x100BA9, "Huawei"),
+    (0x1060AB, "Huawei"),
+    (0x1418C3, "TP-Link"),
+    (0x18FE34, "Espressif (ESP8266/ESP32)"),
+    (0x1C1B0D, "Hewlett Packard"),
+    (0x200BD3, "Cisco"),
+    (0x246E96, "Cisco"),
+    (0x2C0E3D, "Cisco-Meraki"),
+    (0x2C3F38, "Cisco"),
+    (0x2CAD72, "Apple"),
+    (0x305A3A, "Cisco"),
+    (0x3497F6, "Apple"),
+    (0x38C986, "Cisco"),
+    (0x3C970E, "Cisco"),
+    (0x406186, "Amazon"),
+    (0x44A842, "Cisco"),
+    (0x48F8B3, "Cisco"),
+    (0x4CEDFB, "Apple"),
+    (0x50E549, "Espressif"),
+    (0x548200, "Apple"),
+    (0x587BEF, "Cisco"),
+    (0x5C5148, "Cisco"),
+    (0x60A10A, "Cisco"),
+    (0x6400F1, "Cisco"),
+    (0x6C3B6B, "Cisco"),
+    (0x6CAB31, "Cisco"),
+    (0x70B3D5, "IEEE (Registration Authority)"),
+    (0x74867A, "Cisco"),
+    (0x788CB5, "Dell"),
+    (0x78DA6E, "Apple"),
+    (0x7C2117, "Cisco"),
+    (0x844802, "Cisco"),
+    (0x885A92, "Dell"),
+    (0x8C1645, "Hewlett Packard"),
+    (0x8C8590, "Cisco"),
+    (0x8CFABA, "Cisco"),
+    (0x90E2BA, "Intel"),
+    (0x940B8C, "Dell"),
+    (0x9826E8, "Cisco"),
+    (0x9C935B, "Cisco"),
+    (0xA0E0AF, "Apple"),
+    (0xA45E60, "Apple"),
+    (0xA49F10, "Cisco"),
+    (0xA8B1D4, "Cisco"),
+    (0xA8D3F7, "Apple"),
+    (0xAC7E8A, "Apple"),
+    (0xB04A39, "Cisco"),
+    (0xB4E9B0, "Cisco"),
+    (0xB81787, "Cisco"),
+    (0xBC3BAF, "Cisco"),
+    (0xC02B6C, "Huawei"),
+    (0xC0A8E5, "Cisco"),
+    (0xC4146B, "Cisco"),
+    (0xC89C1D, "Apple"),
+    (0xCC16A8, "Cisco"),
+    (0xD0606E, "Cisco"),
+    (0xD49A20, "Cisco"),
+    (0xD4BED9, "Cisco"),
+    (0xDC4400, "Cisco"),
+    (0xDC9FCE, "Cisco"),
+    (0xE09D31, "Cisco"),
+    (0xE0CB4E, "Cisco"),
+    (0xE4D3F1, "Dell"),
+    (0xE8B748, "Cisco"),
+    (0xEC1D7F, "Cisco"),
+    (0xF01898, "Cisco"),
+    (0xF07959, "Cisco"),
+    (0xF09E63, "Cisco"),
+    (0xF40184, "Dell"),
+    (0xF44E05, "Cisco"),
+    (0xF87194, "Apple"),
+    (0xFC5B39, "Cisco"),
+];

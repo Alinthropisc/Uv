@@ -1,0 +1,17 @@
+[package]
+name        = "uv-os"
+version     = "0.1.0"
+edition     = "2021"
+description = "uv OS fingerprinting — lightweight nmap FPEngine-inspired TCP/IP fingerprinter"
+build       = "build.rs"
+
+[build-dependencies]
+cc = "1"
+
+[dependencies]
+uv-core   = { path = "../uv-core" }
+serde     = { workspace = true }
+thiserror = { workspace = true }
+tokio     = { workspace = true }
+
+[dev-dependencies]

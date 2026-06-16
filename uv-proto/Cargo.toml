@@ -1,0 +1,16 @@
+[package]
+name        = "uv-proto"
+version     = "0.1.0"
+edition     = "2021"
+description = "uv proto — protocol banner parsers + async event pool (nmap/masscan-derived)"
+
+[dependencies]
+uv-core     = { path = "../uv-core" }
+uv-crypto   = { path = "../uv-crypto" }
+async-trait = { workspace = true }
+tokio       = { workspace = true }
+thiserror   = { workspace = true }
+serde       = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }

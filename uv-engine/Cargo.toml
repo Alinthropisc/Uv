@@ -1,0 +1,20 @@
+[package]
+name        = "uv-engine"
+version     = "0.1.0"
+edition     = "2021"
+description = "uv engine — async scanner implementation"
+
+[dependencies]
+uv-core     = { path = "../uv-core" }
+async-trait = { workspace = true }
+tokio       = { workspace = true }
+serde       = { workspace = true }
+thiserror   = { workspace = true }
+anyhow      = { workspace = true }
+log         = { workspace = true }
+futures     = { workspace = true }
+tracing     = { workspace = true }
+libc        = "0.2"
+
+[dev-dependencies]
+tokio = { workspace = true }

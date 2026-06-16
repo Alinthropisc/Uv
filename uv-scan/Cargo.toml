@@ -1,0 +1,28 @@
+[package]
+name        = "uv-scan"
+version     = "0.1.0"
+edition     = "2021"
+description = "uv scan — high-level scan orchestrator (discovery → enrich → fingerprint)"
+build       = "build.rs"
+
+[build-dependencies]
+cc = "1"
+
+[dependencies]
+uv-core    = { path = "../uv-core" }
+uv-engine  = { path = "../uv-engine" }
+uv-proto   = { path = "../uv-proto" }
+uv-crypto  = { path = "../uv-crypto" }
+uv-output  = { path = "../uv-output" }
+uv-vuln    = { path = "../uv-vuln" }
+uv-os      = { path = "../uv-os" }
+async-trait = { workspace = true }
+tokio       = { workspace = true }
+futures     = { workspace = true }
+thiserror   = { workspace = true }
+serde       = { workspace = true }
+tracing     = { workspace = true }
+libc        = "0.2"
+
+[dev-dependencies]
+tokio = { workspace = true }

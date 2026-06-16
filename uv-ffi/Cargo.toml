@@ -1,0 +1,13 @@
+[package]
+name        = "uv-ffi"
+version     = "0.1.0"
+edition     = "2021"
+description = "uv FFI — safe Rust wrappers over the C23 net/proto layer"
+build       = "build.rs"
+
+[dependencies]
+uv-core   = { path = "../uv-core" }
+thiserror = { workspace = true }
+
+[build-dependencies]
+cc = "1"

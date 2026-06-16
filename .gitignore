@@ -1,0 +1,109 @@
+# ==============================================================================
+# Rust / Cargo
+# ==============================================================================
+
+# Compiled output and build artifacts
+/target/
+**/target/
+
+# Rustfmt backup files
+**/*.rs.bk
+
+# Generated source files (e.g. from build.rs)
+src/generated.rs
+
+# Cargo.lock: keep for binaries, ignore for pure libraries.
+# This is a binary workspace, so Cargo.lock is intentionally tracked.
+# Uncomment the line below only if this becomes a library-only workspace:
+# Cargo.lock
+
+# ==============================================================================
+# Build artifacts (native / FFI)
+# ==============================================================================
+*.so
+*.a
+*.o
+*.d
+
+# C build artifacts from vendored sources (masscan, nmap, npcap)
+masscan-master/**/*.o
+masscan-master/**/*.a
+masscan-master/**/*.d
+nmap-master/**/*.o
+nmap-master/**/*.a
+nmap-master/**/*.d
+npcap-master/**/*.o
+npcap-master/**/*.a
+npcap-master/**/*.d
+ncrack-master/**/*.o
+ncrack-master/**/*.a
+ncrack-master/**/*.d
+
+# ==============================================================================
+# IDE / Editor
+# ==============================================================================
+
+# JetBrains (IntelliJ, CLion, RustRover, …)
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+out/
+cmake-build-*/
+
+.claude/
+# VS Code
+.vscode/
+
+# Other editor artifacts
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# ==============================================================================
+# OS-generated files
+# ==============================================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==============================================================================
+# Logs
+# ==============================================================================
+*.log
+*.log.*
+storage/logs/
+
+# ==============================================================================
+# Temp / scan runtime files
+# ==============================================================================
+storage/temp/
+*.uvbin
+
+# ==============================================================================
+# Secrets and credentials
+# ==============================================================================
+.env
+.env.*
+!.env.example
+*.pem
+credentials*
+settings.json
+
+# ==============================================================================
+# Package / distribution artifacts
+# ==============================================================================
+*.tar
+*.tar.*
+*.jar
+*.exe
+*.msi
+*.zip
+*.tgz
+*.deb
+*.sig
+
+pkg/

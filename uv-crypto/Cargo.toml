@@ -1,0 +1,17 @@
+[package]
+name        = "uv-crypto"
+version     = "0.1.0"
+edition     = "2021"
+description = "uv crypto — BlackRock2, SipHash, LCG, SYN cookies (masscan-derived)"
+build       = "build.rs"
+
+[dependencies]
+uv-core     = { path = "../uv-core" }
+thiserror   = { workspace = true }
+serde       = { workspace = true }
+
+[build-dependencies]
+cc = "1"
+
+[dev-dependencies]
+tokio = { workspace = true }
