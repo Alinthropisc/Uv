@@ -9,6 +9,7 @@ pub struct Smack {
     /// goto[state][byte] = next_state | GOTO_FAIL
     goto: Vec<[u32; 256]>,
     /// fail[state] = fallback state
+    #[allow(dead_code)]
     fail: Vec<u32>,
     /// output[state] = list of matched pattern indices
     output: Vec<Vec<usize>>,

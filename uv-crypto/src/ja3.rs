@@ -111,6 +111,7 @@ pub fn sha1(data: &[u8]) -> [u8; 20] {
             w[i] = (w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16]).rotate_left(1);
         }
         let (mut a, mut b, mut c, mut d, mut e) = (h[0], h[1], h[2], h[3], h[4]);
+        #[allow(clippy::needless_range_loop)]
         for i in 0..80 {
             let (f, k): (u32, u32) = if i < 20 {
                 ((b & c) | (!b & d), 0x5A827999)

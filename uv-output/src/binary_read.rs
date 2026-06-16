@@ -1,14 +1,14 @@
 // Binary input — masscan in-binary.c style.
 // Reads a saved .uvbin file and reconstructs a partial ScanResult for resume or merging.
 
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::net::IpAddr;
 use std::path::Path;
 
-use uv_core::types::port::{Port, PortState};
+use uv_core::types::port::Port;
 use uv_core::types::protocol::Protocol;
 use uv_core::types::result::{HostResult, ProbeResult, ScanResult};
 
-use crate::binary::{decode_binary, BinaryRecord, BINARY_MAGIC};
+use crate::binary::{decode_binary, BinaryRecord};
 
 /// Load a saved binary scan file and reconstruct a ScanResult.
 pub fn load_binary<P: AsRef<Path>>(path: P) -> std::io::Result<ScanResult> {

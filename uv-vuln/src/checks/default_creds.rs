@@ -4,7 +4,7 @@
 
 use crate::engine::{Checker, VulnResult, VulnSeverity};
 use async_trait::async_trait;
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{IpAddr, SocketAddr, TcpStream};
 use std::time::Duration;
 

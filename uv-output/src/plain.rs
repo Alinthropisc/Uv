@@ -167,9 +167,6 @@ impl Formatter for PlainFormatter {
             if !host.vulns.is_empty() {
                 out.push_str("\nVULNERABILITIES:\n");
                 for v in &host.vulns {
-                    if !v.vulnerable {
-                        continue;
-                    }
                     let cve = v
                         .cve
                         .as_deref()

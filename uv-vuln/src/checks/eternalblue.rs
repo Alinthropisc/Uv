@@ -38,7 +38,7 @@ impl Checker for EternalBlue {
 
     async fn check(&self, ip: IpAddr, port: u16) -> VulnResult {
         let addr = format!("{}:{}", ip, port);
-        let Ok(mut stream) = timeout(Duration::from_secs(5), TcpStream::connect(&addr))
+        let Some(mut stream) = timeout(Duration::from_secs(5), TcpStream::connect(&addr))
             .await
             .ok()
             .and_then(|r| r.ok())

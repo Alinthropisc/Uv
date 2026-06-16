@@ -5,8 +5,7 @@
 // NEVER runs cargo build/test on weak hardware without user request.
 // These tests are written-only; run manually when hardware allows.
 
-use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpListener, UdpSocket};
-use std::sync::Arc;
+use std::net::{IpAddr, Ipv4Addr, TcpListener, UdpSocket};
 use std::thread;
 use std::time::Duration;
 
@@ -83,10 +82,13 @@ async fn banner_grabber_reads_ssh_banner() {
 
     let port = mock_tcp_server(b"SSH-2.0-OpenSSH_8.9p1 Ubuntu\r\n");
 
-    let grabber = TcpBannerGrabber::new(2000, 256);
-    let banner = grabber.grab(LOCAL, port).await.unwrap();
+    use uv_core::types::port::Port;
+    use uv_core::types::protocol::Protocol;
 
-    let text = banner.text.as_deref().unwrap_or("");
+    let grabber = TcpBannerGrabber::new(2000, 256);
+    let info = grabber.grab(LOCAL, Port::new(port), Protocol::Tcp).await.unwrap();
+
+    let text = info.as_ref().and_then(|s| s.banner.as_deref()).unwrap_or("");
     assert!(
         text.contains("SSH-2.0"),
         "expected SSH banner, got: {text:?}"

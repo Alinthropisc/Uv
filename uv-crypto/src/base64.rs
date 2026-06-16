@@ -3,7 +3,7 @@
 const ALPHABET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 pub fn encode(input: &[u8]) -> String {
-    let mut out = Vec::with_capacity((input.len() + 2) / 3 * 4);
+    let mut out = Vec::with_capacity(input.len().div_ceil(3) * 4);
     for chunk in input.chunks(3) {
         let b0 = chunk[0] as u32;
         let b1 = chunk.get(1).copied().unwrap_or(0) as u32;

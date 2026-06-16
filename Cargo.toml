@@ -68,6 +68,10 @@ once_cell = "1.21.4"
 parameterized = "2.0.0"
 wait-timeout = "0.2"
 criterion = { version = "0.8", features = ["html_reports"] }
+uv-proto   = { path = "uv-proto" }
+uv-scan    = { path = "uv-scan" }
+uv-crypto  = { path = "uv-crypto" }
+uv-output  = { path = "uv-output" }
 
 [package.metadata.deb]
 depends = "$auto, nmap"

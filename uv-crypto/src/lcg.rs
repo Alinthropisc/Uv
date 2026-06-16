@@ -40,9 +40,9 @@ fn lcg_params(m: u64) -> (u64, u64) {
     let mut tmp = m;
     let mut p = 2u64;
     while p * p <= tmp {
-        if tmp % p == 0 {
+        if tmp.is_multiple_of(p) {
             a = a.wrapping_mul(p + 1);
-            while tmp % p == 0 {
+            while tmp.is_multiple_of(p) {
                 tmp /= p;
             }
         }
@@ -51,7 +51,7 @@ fn lcg_params(m: u64) -> (u64, u64) {
     if tmp > 1 {
         a = a.wrapping_mul(tmp + 1);
     }
-    if m % 4 == 0 && a % 4 != 1 {
+    if m.is_multiple_of(4) && a % 4 != 1 {
         a += m / (m / 4);
     }
     // c must be odd (coprime with any even m) and non-zero
