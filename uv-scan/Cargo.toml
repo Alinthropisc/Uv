@@ -3,6 +3,7 @@ name        = "uv-scan"
 version     = "0.1.0"
 edition     = "2021"
 description = "uv scan — high-level scan orchestrator (discovery → enrich → fingerprint)"
+license     = "MIT"
 build       = "build.rs"
 
 [build-dependencies]

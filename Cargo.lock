@@ -2383,7 +2383,11 @@ dependencies = [
  "tracing-appender",
  "tracing-subscriber",
  "uv-core",
+ "uv-crypto",
  "uv-engine",
+ "uv-output",
+ "uv-proto",
+ "uv-scan",
  "wait-timeout",
 ]
 

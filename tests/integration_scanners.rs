@@ -17,8 +17,14 @@ fn mock_tcp_server(banner: &'static [u8]) -> u16 {
     let port = listener.local_addr().unwrap().port();
     thread::spawn(move || {
         use std::io::Write;
-        if let Ok((mut stream, _)) = listener.accept() {
-            let _ = stream.write_all(banner);
+        listener.set_nonblocking(false).ok();
+        for _ in 0..32 {
+            match listener.accept() {
+                Ok((mut stream, _)) => {
+                    let _ = stream.write_all(banner);
+                }
+                Err(_) => break,
+            }
         }
     });
     port
@@ -86,9 +92,15 @@ async fn banner_grabber_reads_ssh_banner() {
     use uv_core::types::protocol::Protocol;
 
     let grabber = TcpBannerGrabber::new(2000, 256);
-    let info = grabber.grab(LOCAL, Port::new(port), Protocol::Tcp).await.unwrap();
+    let info = grabber
+        .grab(LOCAL, Port::new(port), Protocol::Tcp)
+        .await
+        .unwrap();
 
-    let text = info.as_ref().and_then(|s| s.banner.as_deref()).unwrap_or("");
+    let text = info
+        .as_ref()
+        .and_then(|s| s.banner.as_ref().and_then(|b| b.text.as_deref()))
+        .unwrap_or("");
     assert!(
         text.contains("SSH-2.0"),
         "expected SSH banner, got: {text:?}"
@@ -212,7 +224,7 @@ fn blackrock_shuffle_is_permutation() {
     let br = BlackRock::new(0xdeadbeef_cafebabe, 256);
     let mut seen = vec![false; 256];
     for i in 0..256u64 {
-        let j = br.permute(i) as usize;
+        let j = br.shuffle(i) as usize;
         assert!(!seen[j], "collision at index {i} → {j}");
         seen[j] = true;
     }

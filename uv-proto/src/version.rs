@@ -181,8 +181,8 @@ impl VersionProbe for SshProbe {
     fn name(&self) -> &'static str {
         "ssh-banner"
     }
-    fn port_matches(&self, port: u16) -> bool {
-        port == 22 || port == 2222
+    fn port_matches(&self, _port: u16) -> bool {
+        true
     }
     fn payload(&self) -> Option<&[u8]> {
         None
@@ -217,8 +217,8 @@ impl VersionProbe for FtpProbe {
     fn name(&self) -> &'static str {
         "ftp-banner"
     }
-    fn port_matches(&self, port: u16) -> bool {
-        port == 21 || port == 2121
+    fn port_matches(&self, _port: u16) -> bool {
+        true
     }
     fn payload(&self) -> Option<&[u8]> {
         None

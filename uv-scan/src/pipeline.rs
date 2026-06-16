@@ -62,7 +62,7 @@ pub async fn run(job: &ScanJob) -> ScanResult {
     // --- Build port list, apply exclude list ---
     let mut ports: Vec<Port> = job.ports.iter().flat_map(|r| r.iter()).collect();
     if !job.port_exclude.is_empty() {
-        ports.retain(|&p| !job.port_exclude.contains(p));
+        ports.retain(|&p| !job.port_exclude.contains(p.0));
     }
 
     // BlackRock2 shuffle — avoids consecutive probes to same subnet
@@ -224,7 +224,7 @@ pub async fn run(job: &ScanJob) -> ScanResult {
             if let Some(ref res) = resume_ref {
                 let mut state = res.lock().await;
                 for probe in &probes {
-                    let _ = state.mark_done(ip, probe.port);
+                    let _ = state.mark_done(ip, probe.port.0);
                 }
             }
 
@@ -276,7 +276,7 @@ pub async fn run(job: &ScanJob) -> ScanResult {
                         probe.service = Some(svc);
                     } else if let Ok(Some(svc)) = grab_ref.grab(ip, probe.port, probe.proto).await {
                         // 2b: fallback to raw banner
-                        tracer::log_open_port(ip, probe.port.0, Some(svc.service.as_str()));
+                        tracer::log_open_port(ip, probe.port.0, Some(&svc.service.to_string()));
                         probe.service = Some(svc);
                     } else {
                         tracer::log_open_port(ip, probe.port.0, None);

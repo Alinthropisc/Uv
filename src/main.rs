@@ -211,12 +211,21 @@ fn print_opening(opts: &Opts) {
   ╚═════╝   ╚═══╝
 Ultra-fast Async Port Scanner  |  masscan speed × nmap intelligence  |  Rust + C23"#;
 
-    println!("{}", s.gradient(Color::Green).bold());
+    use std::io::IsTerminal;
+    if std::io::stdout().is_terminal() {
+        println!("{}", s.gradient(Color::Green).bold());
+    } else {
+        println!("{s}");
+    }
     let info = r#"_________________________________________________
 : Rust Async/Await  +  C23 raw-socket engine    :
 : 10M pps target  |  intelligent probe dispatch :
  -----------------------------------------------"#;
-    println!("{}", info.gradient(Color::Yellow).bold());
+    if std::io::stdout().is_terminal() {
+        println!("{}", info.gradient(Color::Yellow).bold());
+    } else {
+        println!("{info}");
+    }
     funny_opening!();
 
     let config_path = opts

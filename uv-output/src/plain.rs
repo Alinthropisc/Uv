@@ -85,6 +85,7 @@ impl Formatter for PlainFormatter {
                         PortState::Open => "open",
                         PortState::Filtered => "filtered",
                         PortState::Closed => "closed",
+                        PortState::OpenFiltered => "open|filtered",
                     };
 
                     Row {

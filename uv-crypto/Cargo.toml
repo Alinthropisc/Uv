@@ -3,6 +3,7 @@ name        = "uv-crypto"
 version     = "0.1.0"
 edition     = "2021"
 description = "uv crypto — BlackRock2, SipHash, LCG, SYN cookies (masscan-derived)"
+license     = "MIT"
 build       = "build.rs"
 
 [dependencies]

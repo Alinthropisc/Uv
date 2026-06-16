@@ -58,6 +58,7 @@ fn dedup_ports(host: &mut HostResult) {
 
     let state_rank = |s: PortState| match s {
         PortState::Open => 2,
+        PortState::OpenFiltered => 2,
         PortState::Filtered => 1,
         PortState::Closed => 0,
     };

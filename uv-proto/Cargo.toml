@@ -3,6 +3,7 @@ name        = "uv-proto"
 version     = "0.1.0"
 edition     = "2021"
 description = "uv proto — protocol banner parsers + async event pool (nmap/masscan-derived)"
+license     = "MIT"
 
 [dependencies]
 uv-core     = { path = "../uv-core" }
