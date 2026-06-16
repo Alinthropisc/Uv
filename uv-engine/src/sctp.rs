@@ -290,12 +290,11 @@ fn sockaddr_for(ip: IpAddr, _port: u16) -> libc::sockaddr_in {
         IpAddr::V4(v4) => u32::from(v4).to_be(),
         IpAddr::V6(_) => 0, // IPv6 handled separately; simplified here
     };
-    libc::sockaddr_in {
-        sin_family: libc::AF_INET as libc::sa_family_t,
-        sin_port: 0,
-        sin_addr: libc::in_addr { s_addr: addr },
-        sin_zero: [0; 8],
-    }
+    let mut sa: libc::sockaddr_in = unsafe { std::mem::zeroed() };
+    sa.sin_family = libc::AF_INET as libc::sa_family_t;
+    sa.sin_port = 0;
+    sa.sin_addr = libc::in_addr { s_addr: addr };
+    sa
 }
 
 fn is_root() -> bool {

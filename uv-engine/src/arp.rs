@@ -44,6 +44,7 @@ pub async fn arp_sweep(targets: &[Ipv4Addr], timeout_ms: u32) -> Vec<ArpResult> 
     results
 }
 
+#[cfg(target_os = "linux")]
 fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
     let timeout = Duration::from_millis(timeout_ms as u64);
 
@@ -56,18 +57,14 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         )
     };
     if sock < 0 {
-        return None; // No permission or not Linux — silently skip
+        return None;
     }
 
-    // Get interface index for binding (use first non-loopback interface)
     let ifindex = get_interface_index(sock)?;
-
-    // Build ARP request
     let src_mac = get_interface_mac(sock, ifindex)?;
     let src_ip = get_source_ip(target)?;
     let pkt = build_arp_request(&src_mac, src_ip, target);
 
-    // Bind to interface
     let sll = libc::sockaddr_ll {
         sll_family: libc::AF_PACKET as u16,
         sll_protocol: (0x0806u16).to_be(),
@@ -85,12 +82,10 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         );
     }
 
-    // Send ARP request
     unsafe {
         libc::send(sock, pkt.as_ptr() as *const libc::c_void, pkt.len(), 0);
     }
 
-    // Set receive timeout
     let tv = libc::timeval {
         tv_sec: timeout.as_secs() as libc::time_t,
         tv_usec: (timeout.subsec_millis() as libc::suseconds_t) * 1000,
@@ -105,7 +100,6 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         );
     }
 
-    // Receive ARP replies
     let mut buf = [0u8; 60];
     let deadline = std::time::Instant::now() + timeout;
     let mut found = None;
@@ -115,10 +109,7 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         if n < 42 {
             break;
         }
-        // Ethernet frame: dst(6) + src(6) + ethertype(2) = 14 bytes header
-        // ARP packet starts at byte 14
         let arp = &buf[14..];
-        // ARP reply: opcode=0x0002, sender_ip at offset 14
         if arp.len() >= 28 && arp[6] == 0x00 && arp[7] == 0x02 {
             let sender_ip = Ipv4Addr::new(arp[14], arp[15], arp[16], arp[17]);
             if sender_ip == target {
@@ -139,6 +130,11 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         libc::close(sock);
     }
     found
+}
+
+#[cfg(not(target_os = "linux"))]
+fn arp_blocking(_target: Ipv4Addr, _timeout_ms: u32) -> Option<ArpResult> {
+    None
 }
 
 /// Build a raw ARP request Ethernet frame.
@@ -168,6 +164,7 @@ fn build_arp_request(src_mac: &[u8; 6], src_ip: Ipv4Addr, dst_ip: Ipv4Addr) -> V
     pkt
 }
 
+#[cfg(target_os = "linux")]
 fn get_interface_index(sock: libc::c_int) -> Option<libc::c_int> {
     let mut ifr: libc::ifreq = unsafe { std::mem::zeroed() };
     // Try eth0, then ens33, then enp0s3
@@ -183,6 +180,7 @@ fn get_interface_index(sock: libc::c_int) -> Option<libc::c_int> {
     None
 }
 
+#[cfg(target_os = "linux")]
 fn get_interface_mac(sock: libc::c_int, _ifindex: libc::c_int) -> Option<[u8; 6]> {
     let mut ifr: libc::ifreq = unsafe { std::mem::zeroed() };
     let name = b"eth0\0";

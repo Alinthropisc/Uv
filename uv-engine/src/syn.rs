@@ -119,14 +119,10 @@ fn syn_scan_blocking(
     // Send SYN to each port
     for &port in ports {
         let pkt = build_syn_packet(src_ip, dst_ip, src_port, port.0);
-        let dst_addr = libc::sockaddr_in {
-            sin_family: libc::AF_INET as libc::sa_family_t,
-            sin_port: port.0.to_be(),
-            sin_addr: libc::in_addr {
-                s_addr: u32::from(dst_ip).to_be(),
-            },
-            sin_zero: [0; 8],
-        };
+        let mut dst_addr: libc::sockaddr_in = unsafe { std::mem::zeroed() };
+        dst_addr.sin_family = libc::AF_INET as libc::sa_family_t;
+        dst_addr.sin_port = port.0.to_be();
+        dst_addr.sin_addr = libc::in_addr { s_addr: u32::from(dst_ip).to_be() };
         let ret = unsafe {
             libc::sendto(
                 sock,
@@ -203,14 +199,10 @@ fn syn_scan_blocking(
                 tcp_src_port,
                 u32::from_be_bytes([tcp[8], tcp[9], tcp[10], tcp[11]]) + 1,
             );
-            let dst_addr = libc::sockaddr_in {
-                sin_family: libc::AF_INET as libc::sa_family_t,
-                sin_port: tcp_src_port.to_be(),
-                sin_addr: libc::in_addr {
-                    s_addr: u32::from(dst_ip).to_be(),
-                },
-                sin_zero: [0; 8],
-            };
+            let mut dst_addr: libc::sockaddr_in = unsafe { std::mem::zeroed() };
+            dst_addr.sin_family = libc::AF_INET as libc::sa_family_t;
+            dst_addr.sin_port = tcp_src_port.to_be();
+            dst_addr.sin_addr = libc::in_addr { s_addr: u32::from(dst_ip).to_be() };
             unsafe {
                 libc::sendto(
                     sock,
