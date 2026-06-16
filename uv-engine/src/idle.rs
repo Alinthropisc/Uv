@@ -39,6 +39,10 @@ impl IdleScanner {
 
 #[async_trait::async_trait]
 impl Scanner for IdleScanner {
+    fn protocol(&self) -> Protocol {
+        Protocol::Tcp
+    }
+
     async fn scan(&self, target: IpAddr, ports: &[Port]) -> Result<Vec<ProbeResult>, UvError> {
         let dst_ip = match target {
             IpAddr::V4(v4) => v4,
@@ -118,7 +122,9 @@ fn idle_scan_blocking(
         let probe = match state {
             PortState::Open => ProbeResult::open(port, Protocol::Tcp, Duration::from_millis(100)),
             PortState::Closed => ProbeResult::closed(port, Protocol::Tcp),
-            PortState::Filtered => ProbeResult::filtered(port, Protocol::Tcp),
+            PortState::Filtered | PortState::OpenFiltered => {
+                ProbeResult::filtered(port, Protocol::Tcp)
+            }
         };
         results.push(probe);
     }

@@ -3,6 +3,7 @@ name        = "uv-core"
 version     = "0.1.0"
 edition     = "2021"
 description = "uv core — contracts, types, traits, errors"
+license     = "GPL-3.0-only"
 
 [dependencies]
 async-trait = { workspace = true }

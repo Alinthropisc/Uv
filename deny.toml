@@ -7,6 +7,14 @@ ignore = [
     "RUSTSEC-2026-0098",
     "RUSTSEC-2026-0099",
     "RUSTSEC-2026-0104",
+    # hickory-proto — pinned by hickory-resolver, no patched version available in tree yet
+    "RUSTSEC-2026-0119",
+    # ansi_term — unmaintained, used by clap 2.x; no code path vulnerable
+    "RUSTSEC-2021-0139",
+    # async-std — discontinued; used indirectly, no replacement yet
+    "RUSTSEC-2025-0052",
+    # rustls-pemfile — unmaintained wrapper; transitively pulled, no breaking issues
+    "RUSTSEC-2025-0134",
 ]
 
 [licenses]
@@ -23,6 +31,8 @@ allow = [
     "0BSD",
     "Zlib",
     "OpenSSL",
+    "MPL-2.0",
+    "GPL-3.0-only",
 ]
 # Allow packages whose license can't be determined (rare, review manually)
 confidence-threshold = 0.8

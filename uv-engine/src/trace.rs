@@ -82,7 +82,7 @@ fn probe_hop(dst: SocketAddr, ttl: u8, timeout: Duration) -> Hop {
     {
         use std::os::unix::io::AsRawFd;
         let fd = sock.as_raw_fd();
-        let ttl_val: libc_ttl = ttl as libc_ttl;
+        let ttl_val: LibcTtl = ttl as LibcTtl;
         unsafe {
             libc_setsockopt(fd, ttl_val);
         }
@@ -121,7 +121,7 @@ fn probe_hop(dst: SocketAddr, ttl: u8, timeout: Duration) -> Hop {
 
 // Minimal inline TTL setter via setsockopt — avoids pulling in libc crate.
 #[cfg(target_os = "linux")]
-type libc_ttl = i32;
+type LibcTtl = i32;
 
 #[cfg(target_os = "linux")]
 unsafe fn libc_setsockopt(fd: i32, ttl: i32) {

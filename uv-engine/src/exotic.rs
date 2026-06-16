@@ -33,14 +33,14 @@ impl ExoticScanner {
             // Actual packet crafting happens in uv-ffi/rawsock.
             ScanType::Null | ScanType::Fin | ScanType::Xmas => {
                 // No response → open|filtered; RST → closed; ICMP unreach → filtered
-                // Without raw socket we can't distinguish — return Unknown
-                PortState::Unknown
+                // Without raw socket we can't distinguish — report open|filtered
+                PortState::OpenFiltered
             }
             ScanType::Ack | ScanType::Window => {
                 // RST received → unfiltered; no response → filtered
-                PortState::Unknown
+                PortState::Filtered
             }
-            _ => PortState::Unknown,
+            _ => PortState::Filtered,
         };
 
         ProbeResult {
@@ -48,6 +48,7 @@ impl ExoticScanner {
             proto: Protocol::Tcp,
             state,
             rtt: None,
+            ttl: None,
             service: None,
         }
     }
@@ -55,7 +56,7 @@ impl ExoticScanner {
     async fn tcp_connect_probe(&self, addr: IpAddr, port: Port) -> PortState {
         use std::net::SocketAddr;
         use std::time::Duration;
-        let sa = SocketAddr::new(addr, port);
+        let sa = SocketAddr::new(addr, port.get());
         let timeout = Duration::from_millis(self.timeout_ms as u64);
         tokio::task::spawn_blocking(move || {
             match std::net::TcpStream::connect_timeout(&sa, timeout) {
@@ -65,13 +66,13 @@ impl ExoticScanner {
                     match e.kind() {
                         ErrorKind::ConnectionRefused => PortState::Closed,
                         ErrorKind::TimedOut => PortState::Filtered,
-                        _ => PortState::Unknown,
+                        _ => PortState::Filtered,
                     }
                 }
             }
         })
         .await
-        .unwrap_or(PortState::Unknown)
+        .unwrap_or(PortState::Filtered)
     }
 
     /// TCP flag bytes for each scan type (for uv-ffi raw packet builder).

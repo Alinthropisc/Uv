@@ -111,6 +111,7 @@ pub async fn ping_sweep(
 
 #[cfg(target_os = "linux")]
 pub mod raw_icmp {
+    #[allow(unused_imports)]
     use std::net::Ipv4Addr;
 
     /// Build an ICMP echo request packet (type=8, code=0).

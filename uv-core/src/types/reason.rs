@@ -88,7 +88,7 @@ impl StateReason {
             (3, 3) => Self::IcmpPortUnreach,
             (3, 0) => Self::IcmpNetUnreach,
             (3, 1) => Self::IcmpHostUnreach,
-            (3, 1) | (3, 9) | (3, 10) | (3, 13) => Self::IcmpAdminProhibited,
+            (3, 9) | (3, 10) | (3, 13) => Self::IcmpAdminProhibited,
             (11, _) => Self::IcmpTtlExceeded,
             _ => Self::Unknown,
         }

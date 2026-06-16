@@ -3,6 +3,7 @@ name        = "uv-engine"
 version     = "0.1.0"
 edition     = "2021"
 description = "uv engine — async scanner implementation"
+license     = "GPL-3.0-only"
 
 [dependencies]
 uv-core     = { path = "../uv-core" }

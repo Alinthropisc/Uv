@@ -47,6 +47,10 @@ impl SctpScanner {
 
 #[async_trait]
 impl Scanner for SctpScanner {
+    fn protocol(&self) -> Protocol {
+        Protocol::Sctp
+    }
+
     async fn scan(&self, target: IpAddr, ports: &[Port]) -> UvResult<Vec<ProbeResult>> {
         // Raw SCTP requires AF_INET/SOCK_RAW — must run as root.
         // We probe each port sequentially (SCTP is not a TCP-connect workaround).

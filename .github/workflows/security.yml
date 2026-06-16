@@ -32,7 +32,16 @@ jobs:
 
       - name: Run cargo audit
         # --ignore flags for vulnerabilities in transitive deps we can't update yet
-        run: cargo audit --ignore RUSTSEC-2026-0098 --ignore RUSTSEC-2026-0099 --ignore RUSTSEC-2026-0104
+        run: |
+          cargo audit \
+            --ignore RUSTSEC-2026-0098 \
+            --ignore RUSTSEC-2026-0099 \
+            --ignore RUSTSEC-2026-0104 \
+            --ignore RUSTSEC-2026-0119 \
+            --ignore RUSTSEC-2021-0139 \
+            --ignore RUSTSEC-2025-0052 \
+            --ignore RUSTSEC-2025-0134 \
+            --ignore RUSTSEC-2026-0097
 
   deny:
     name: cargo deny

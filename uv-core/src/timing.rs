@@ -84,7 +84,7 @@ impl TimingTemplate {
         }
     }
 
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn parse(s: &str) -> Option<Self> {
         match s {
             "0" | "T0" | "paranoid" => Some(Self::T0),
             "1" | "T1" | "sneaky" => Some(Self::T1),

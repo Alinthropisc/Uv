@@ -31,6 +31,12 @@ pub enum UvError {
     #[error("Unsupported platform: {0}")]
     UnsupportedPlatform(String),
 
+    #[error("Unsupported: {0}")]
+    Unsupported(String),
+
+    #[error("Permission denied: {0}")]
+    Permission(String),
+
     #[error("{0}")]
     Other(#[from] anyhow::Error),
 }
