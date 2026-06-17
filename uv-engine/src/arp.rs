@@ -3,6 +3,7 @@
 // Requires CAP_NET_RAW. Falls back gracefully if interface unavailable.
 
 use std::net::Ipv4Addr;
+#[cfg(target_os = "linux")]
 use std::time::Duration;
 
 /// Result of an ARP lookup.
@@ -138,6 +139,7 @@ fn arp_blocking(_target: Ipv4Addr, _timeout_ms: u32) -> Option<ArpResult> {
 }
 
 /// Build a raw ARP request Ethernet frame.
+#[cfg(target_os = "linux")]
 fn build_arp_request(src_mac: &[u8; 6], src_ip: Ipv4Addr, dst_ip: Ipv4Addr) -> Vec<u8> {
     let mut pkt = vec![0u8; 42]; // 14 Ethernet + 28 ARP
 
@@ -201,6 +203,7 @@ fn get_interface_mac(sock: libc::c_int, _ifindex: libc::c_int) -> Option<[u8; 6]
     ])
 }
 
+#[cfg(target_os = "linux")]
 fn get_source_ip(dst: Ipv4Addr) -> Option<Ipv4Addr> {
     use std::net::{SocketAddr, UdpSocket};
     let sock = UdpSocket::bind("0.0.0.0:0").ok()?;

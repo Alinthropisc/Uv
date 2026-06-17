@@ -1,12 +1,10 @@
 // Raw SYN stealth scanner — masscan stack-tcp-core.c / templ-pkt.c style.
-// Sends raw TCP SYN packets via AF_PACKET (Linux) or raw IP socket,
-// receives SYN-ACK (open) or RST (closed) without completing the handshake.
+// Sends raw TCP SYN packets via raw IP socket, receives SYN-ACK (open) or RST (closed).
 // Requires CAP_NET_RAW / root.
 
 use std::net::{IpAddr, Ipv4Addr};
 use std::time::Duration;
 
-use tracing::{debug, warn};
 use uv_core::traits::Scanner;
 use uv_core::types::port::{Port, PortState};
 use uv_core::types::protocol::Protocol;
@@ -42,28 +40,52 @@ impl Scanner for SynStealthScanner {
     }
 
     async fn scan(&self, target: IpAddr, ports: &[Port]) -> Result<Vec<ProbeResult>, UvError> {
-        let dst_ip = match target {
-            IpAddr::V4(v4) => v4,
-            IpAddr::V6(_) => return Err(UvError::Unsupported("SYN stealth requires IPv4".into())),
-        };
+        #[cfg(not(unix))]
+        {
+            let _ = (target, ports);
+            return Err(UvError::Unsupported(
+                "SYN stealth scan requires Unix (raw sockets)".into(),
+            ));
+        }
 
-        let src_ip = self.src_ip.unwrap_or_else(|| {
-            // Derive source IP from routing table via UDP trick
-            get_source_ip(dst_ip).unwrap_or(Ipv4Addr::UNSPECIFIED)
-        });
+        #[cfg(unix)]
+        {
+            let dst_ip = match target {
+                IpAddr::V4(v4) => v4,
+                IpAddr::V6(_) => {
+                    return Err(UvError::Unsupported("SYN stealth requires IPv4".into()))
+                }
+            };
 
-        let timeout = Duration::from_millis(self.timeout_ms as u64);
-        let src_port = self.src_port;
-        let ports_vec: Vec<Port> = ports.to_vec();
+            let src_ip = self.src_ip.unwrap_or_else(|| {
+                get_source_ip(dst_ip).unwrap_or(Ipv4Addr::UNSPECIFIED)
+            });
 
-        tokio::task::spawn_blocking(move || {
-            syn_scan_blocking(src_ip, dst_ip, src_port, &ports_vec, timeout)
-        })
-        .await
-        .map_err(|e| UvError::Io(std::io::Error::other(e.to_string())))?
+            let timeout = Duration::from_millis(self.timeout_ms as u64);
+            let src_port = self.src_port;
+            let ports_vec: Vec<Port> = ports.to_vec();
+
+            tokio::task::spawn_blocking(move || {
+                syn_scan_blocking(src_ip, dst_ip, src_port, &ports_vec, timeout)
+            })
+            .await
+            .map_err(|e| UvError::Io(std::io::Error::other(e.to_string())))?
+        }
     }
 }
 
+#[cfg(unix)]
+fn get_source_ip(dst: Ipv4Addr) -> Option<Ipv4Addr> {
+    use std::net::{SocketAddr, UdpSocket};
+    let sock = UdpSocket::bind("0.0.0.0:0").ok()?;
+    sock.connect(SocketAddr::new(IpAddr::V4(dst), 80)).ok()?;
+    match sock.local_addr().ok()? {
+        SocketAddr::V4(v4) => Some(*v4.ip()),
+        _ => None,
+    }
+}
+
+#[cfg(unix)]
 fn syn_scan_blocking(
     src_ip: Ipv4Addr,
     dst_ip: Ipv4Addr,
@@ -72,14 +94,13 @@ fn syn_scan_blocking(
     timeout: Duration,
 ) -> Result<Vec<ProbeResult>, UvError> {
     use std::collections::HashMap;
+    use tracing::{debug, warn};
 
-    // Open raw socket (IPPROTO_RAW — sends raw IP packets)
     let sock = unsafe { libc::socket(libc::AF_INET, libc::SOCK_RAW, libc::IPPROTO_RAW) };
     if sock < 0 {
         return Err(UvError::Io(std::io::Error::last_os_error()));
     }
 
-    // Enable IP_HDRINCL so we build our own IP headers
     let one: libc::c_int = 1;
     unsafe {
         libc::setsockopt(
@@ -91,14 +112,12 @@ fn syn_scan_blocking(
         );
     }
 
-    // Open receive socket to capture SYN-ACK / RST responses
     let recv_sock = unsafe { libc::socket(libc::AF_INET, libc::SOCK_RAW, libc::IPPROTO_TCP) };
     if recv_sock < 0 {
         unsafe { libc::close(sock) };
         return Err(UvError::Io(std::io::Error::last_os_error()));
     }
 
-    // Set receive timeout
     let tv = libc::timeval {
         tv_sec: timeout.as_secs() as libc::time_t,
         tv_usec: 0,
@@ -116,7 +135,6 @@ fn syn_scan_blocking(
     let mut results: HashMap<u16, PortState> =
         ports.iter().map(|&p| (p.0, PortState::Filtered)).collect();
 
-    // Send SYN to each port
     for &port in ports {
         let pkt = build_syn_packet(src_ip, dst_ip, src_port, port.0);
         let mut dst_addr: libc::sockaddr_in = unsafe { std::mem::zeroed() };
@@ -146,7 +164,6 @@ fn syn_scan_blocking(
         }
     }
 
-    // Receive responses
     let deadline = std::time::Instant::now() + timeout;
     let mut buf = [0u8; 4096];
 
@@ -160,11 +177,9 @@ fn syn_scan_blocking(
             )
         };
         if n <= 0 {
-            break; // timeout or error
+            break;
         }
         let pkt = &buf[..n as usize];
-
-        // Parse IP header (20 bytes min)
         if pkt.len() < 40 {
             continue;
         }
@@ -172,28 +187,21 @@ fn syn_scan_blocking(
         if pkt.len() < ihl + 20 {
             continue;
         }
-
-        // Check source IP matches our target
         let src_addr = Ipv4Addr::new(pkt[12], pkt[13], pkt[14], pkt[15]);
         if src_addr != dst_ip {
             continue;
         }
-
         let tcp = &pkt[ihl..];
         let tcp_src_port = u16::from_be_bytes([tcp[0], tcp[1]]);
         let tcp_dst_port = u16::from_be_bytes([tcp[2], tcp[3]]);
         let flags = tcp[13];
-
         if tcp_dst_port != src_port {
-            continue; // not for us
+            continue;
         }
-
-        let syn_ack = flags & 0x12 == 0x12; // SYN+ACK
-        let rst = flags & 0x04 != 0; // RST
-
+        let syn_ack = flags & 0x12 == 0x12;
+        let rst = flags & 0x04 != 0;
         if syn_ack {
             results.insert(tcp_src_port, PortState::Open);
-            // Send RST to tear down half-open connection
             let rst_pkt = build_rst_packet(
                 src_ip,
                 dst_ip,
@@ -244,65 +252,47 @@ fn syn_scan_blocking(
     Ok(probe_results)
 }
 
-/// Build raw IPv4 + TCP SYN packet.
+#[cfg(unix)]
 fn build_syn_packet(src: Ipv4Addr, dst: Ipv4Addr, sport: u16, dport: u16) -> Vec<u8> {
-    let mut pkt = vec![0u8; 40]; // 20 IP + 20 TCP
-
-    // IP header
-    pkt[0] = 0x45; // version=4, IHL=5
-    pkt[1] = 0; // DSCP/ECN
-    pkt[2] = 0;
-    pkt[3] = 40; // total length
-    pkt[4] = 0;
-    pkt[5] = 0; // ID
-    pkt[6] = 0x40; // DF bit
-    pkt[7] = 0;
-    pkt[8] = 64; // TTL
-    pkt[9] = 6; // protocol = TCP
-                // checksum [10..12] = 0 (kernel fills it with IP_HDRINCL)
+    let mut pkt = vec![0u8; 40];
+    pkt[0] = 0x45;
+    pkt[3] = 40;
+    pkt[6] = 0x40;
+    pkt[8] = 64;
+    pkt[9] = 6;
     pkt[12..16].copy_from_slice(&src.octets());
     pkt[16..20].copy_from_slice(&dst.octets());
-
-    // TCP header
     pkt[20..22].copy_from_slice(&sport.to_be_bytes());
     pkt[22..24].copy_from_slice(&dport.to_be_bytes());
-    // seq = random-ish
     let seq = pseudo_random_seq(src, dst, sport, dport);
     pkt[24..28].copy_from_slice(&seq.to_be_bytes());
-    // ack = 0
-    pkt[28..32].copy_from_slice(&0u32.to_be_bytes());
-    pkt[32] = 0x50; // data offset = 5 (20 bytes), reserved = 0
-    pkt[33] = 0x02; // SYN flag
-    pkt[34..36].copy_from_slice(&1024u16.to_be_bytes()); // window
-                                                         // checksum [36..38] — compute TCP checksum
+    pkt[32] = 0x50;
+    pkt[33] = 0x02;
+    pkt[34..36].copy_from_slice(&1024u16.to_be_bytes());
     let cksum = tcp_checksum(&src.octets(), &dst.octets(), &pkt[20..]);
     pkt[36..38].copy_from_slice(&cksum.to_be_bytes());
-    // urgent = 0
-
     pkt
 }
 
-/// Build RST packet to close a half-open SYN-ACK connection.
+#[cfg(unix)]
 fn build_rst_packet(src: Ipv4Addr, dst: Ipv4Addr, sport: u16, dport: u16, seq: u32) -> Vec<u8> {
     let mut pkt = build_syn_packet(src, dst, sport, dport);
     pkt[24..28].copy_from_slice(&seq.to_be_bytes());
-    pkt[33] = 0x04; // RST flag
+    pkt[33] = 0x04;
     let cksum = tcp_checksum(&src.octets(), &dst.octets(), &pkt[20..]);
     pkt[36..38].copy_from_slice(&cksum.to_be_bytes());
     pkt
 }
 
-/// TCP checksum over pseudo-header + TCP segment.
+#[cfg(unix)]
 fn tcp_checksum(src: &[u8; 4], dst: &[u8; 4], tcp: &[u8]) -> u16 {
     let mut sum: u32 = 0;
-    // Pseudo-header: src(4) + dst(4) + 0 + proto(1) + tcp_len(2)
     sum += u16::from_be_bytes([src[0], src[1]]) as u32;
     sum += u16::from_be_bytes([src[2], src[3]]) as u32;
     sum += u16::from_be_bytes([dst[0], dst[1]]) as u32;
     sum += u16::from_be_bytes([dst[2], dst[3]]) as u32;
-    sum += 6u32; // TCP protocol
+    sum += 6u32;
     sum += tcp.len() as u32;
-    // TCP segment
     let mut i = 0;
     while i + 1 < tcp.len() {
         sum += u16::from_be_bytes([tcp[i], tcp[i + 1]]) as u32;
@@ -317,7 +307,7 @@ fn tcp_checksum(src: &[u8; 4], dst: &[u8; 4], tcp: &[u8]) -> u16 {
     !(sum as u16)
 }
 
-/// Simple deterministic seq number (avoids ISN collisions per flow).
+#[cfg(unix)]
 fn pseudo_random_seq(src: Ipv4Addr, dst: Ipv4Addr, sport: u16, dport: u16) -> u32 {
     let mut h = 0x811c9dc5u32;
     for b in src.octets().iter().chain(dst.octets().iter()) {
@@ -327,16 +317,4 @@ fn pseudo_random_seq(src: Ipv4Addr, dst: Ipv4Addr, sport: u16, dport: u16) -> u3
     h ^= sport as u32;
     h ^= (dport as u32) << 16;
     h
-}
-
-/// Get local source IP for reaching dst via a UDP trick (doesn't send packets).
-fn get_source_ip(dst: Ipv4Addr) -> Option<Ipv4Addr> {
-    use std::net::{SocketAddr, UdpSocket};
-    let sock = UdpSocket::bind("0.0.0.0:0").ok()?;
-    sock.connect(SocketAddr::new(std::net::IpAddr::V4(dst), 80))
-        .ok()?;
-    match sock.local_addr().ok()? {
-        SocketAddr::V4(v4) => Some(*v4.ip()),
-        _ => None,
-    }
 }

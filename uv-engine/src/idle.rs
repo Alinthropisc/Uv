@@ -9,10 +9,9 @@
 //   4. If ipid2 == ipid1 + 2 → target sent SYN-ACK to zombie (port OPEN)
 //      If ipid2 == ipid1 + 1 → target sent RST to zombie (port CLOSED/FILTERED)
 
-use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
+use std::net::{IpAddr, Ipv4Addr};
 use std::time::Duration;
 
-use tracing::{debug, warn};
 use uv_core::traits::Scanner;
 use uv_core::types::port::{Port, PortState};
 use uv_core::types::protocol::Protocol;
@@ -26,8 +25,6 @@ pub struct IdleScanner {
 }
 
 impl IdleScanner {
-    /// Create an idle scanner using `zombie` as the IP ID oracle.
-    /// `zombie_port` is an open port on the zombie (to probe its IP ID counter).
     pub fn new(zombie: Ipv4Addr, zombie_port: u16, timeout_ms: u32) -> Self {
         Self {
             zombie,
@@ -44,24 +41,38 @@ impl Scanner for IdleScanner {
     }
 
     async fn scan(&self, target: IpAddr, ports: &[Port]) -> Result<Vec<ProbeResult>, UvError> {
-        let dst_ip = match target {
-            IpAddr::V4(v4) => v4,
-            IpAddr::V6(_) => return Err(UvError::Unsupported("Idle scan requires IPv4".into())),
-        };
+        #[cfg(not(unix))]
+        {
+            let _ = (target, ports);
+            return Err(UvError::Unsupported(
+                "Idle scan requires Unix (raw sockets)".into(),
+            ));
+        }
 
-        let zombie = self.zombie;
-        let zombie_port = self.zombie_port;
-        let timeout_ms = self.timeout_ms;
-        let ports_vec: Vec<Port> = ports.to_vec();
+        #[cfg(unix)]
+        {
+                let dst_ip = match target {
+                IpAddr::V4(v4) => v4,
+                IpAddr::V6(_) => {
+                    return Err(UvError::Unsupported("Idle scan requires IPv4".into()))
+                }
+            };
 
-        tokio::task::spawn_blocking(move || {
-            idle_scan_blocking(zombie, zombie_port, dst_ip, &ports_vec, timeout_ms)
-        })
-        .await
-        .map_err(|e| UvError::Io(std::io::Error::other(e.to_string())))?
+            let zombie = self.zombie;
+            let zombie_port = self.zombie_port;
+            let timeout_ms = self.timeout_ms;
+            let ports_vec: Vec<Port> = ports.to_vec();
+
+            tokio::task::spawn_blocking(move || {
+                idle_scan_blocking(zombie, zombie_port, dst_ip, &ports_vec, timeout_ms)
+            })
+            .await
+            .map_err(|e| UvError::Io(std::io::Error::other(e.to_string())))?
+        }
     }
 }
 
+#[cfg(unix)]
 fn idle_scan_blocking(
     zombie: Ipv4Addr,
     zombie_port: u16,
@@ -69,9 +80,10 @@ fn idle_scan_blocking(
     ports: &[Port],
     timeout_ms: u32,
 ) -> Result<Vec<ProbeResult>, UvError> {
+    use tracing::{debug, warn};
+
     let timeout = Duration::from_millis(timeout_ms as u64);
 
-    // Verify zombie has predictable (incremental) IP ID by sampling 3 times
     let id0 = probe_ipid(zombie, zombie_port, timeout)?;
     std::thread::sleep(Duration::from_millis(50));
     let id1 = probe_ipid(zombie, zombie_port, timeout)?;
@@ -91,25 +103,16 @@ fn idle_scan_blocking(
     let mut results = Vec::with_capacity(ports.len());
 
     for &port in ports {
-        // Step 1: get zombie IP ID baseline
         let ipid_before = probe_ipid(zombie, zombie_port, timeout)?;
-
-        // Step 2: send spoofed SYN to target, appearing to come from zombie
         send_spoofed_syn(zombie, target, src_port, port.0)?;
-
-        // Allow time for target to respond to zombie and zombie to reply
         std::thread::sleep(Duration::from_millis(100));
-
-        // Step 3: probe zombie again
         let ipid_after = probe_ipid(zombie, zombie_port, timeout)?;
-
         let increment = ipid_after.wrapping_sub(ipid_before);
 
-        // Step 4: classify
         let state = match increment {
-            2 => PortState::Open,     // SYN-ACK from target → zombie replied RST → +2
-            1 => PortState::Closed,   // RST from target → zombie silent → +1 (our probe only)
-            _ => PortState::Filtered, // firewall dropped or flood
+            2 => PortState::Open,
+            1 => PortState::Closed,
+            _ => PortState::Filtered,
         };
 
         debug!(%target, port = port.0, ipid_before, ipid_after, increment, ?state, "idle scan result");
@@ -127,7 +130,7 @@ fn idle_scan_blocking(
     Ok(results)
 }
 
-/// Send a TCP SYN to (target, dport) spoofed as coming from zombie:sport.
+#[cfg(unix)]
 fn send_spoofed_syn(
     zombie: Ipv4Addr,
     target: Ipv4Addr,
@@ -172,31 +175,29 @@ fn send_spoofed_syn(
     Ok(())
 }
 
-/// Build a spoofed SYN packet: IP src = zombie, IP dst = target.
+#[cfg(unix)]
 fn build_spoofed_syn(zombie: Ipv4Addr, target: Ipv4Addr, sport: u16, dport: u16) -> Vec<u8> {
     let mut pkt = vec![0u8; 40];
     pkt[0] = 0x45;
     pkt[3] = 40;
-    pkt[6] = 0x40; // DF
-    pkt[8] = 64; // TTL
-    pkt[9] = 6; // TCP
-    pkt[12..16].copy_from_slice(&zombie.octets()); // spoofed src
+    pkt[6] = 0x40;
+    pkt[8] = 64;
+    pkt[9] = 6;
+    pkt[12..16].copy_from_slice(&zombie.octets());
     pkt[16..20].copy_from_slice(&target.octets());
     pkt[20..22].copy_from_slice(&sport.to_be_bytes());
     pkt[22..24].copy_from_slice(&dport.to_be_bytes());
-    pkt[24..28].copy_from_slice(&0xdeadbeefu32.to_be_bytes()); // seq
-    pkt[32] = 0x50; // data offset
-    pkt[33] = 0x02; // SYN
+    pkt[24..28].copy_from_slice(&0xdeadbeefu32.to_be_bytes());
+    pkt[32] = 0x50;
+    pkt[33] = 0x02;
     pkt[34..36].copy_from_slice(&1024u16.to_be_bytes());
     let cksum = tcp_checksum(&zombie.octets(), &target.octets(), &pkt[20..]);
     pkt[36..38].copy_from_slice(&cksum.to_be_bytes());
     pkt
 }
 
-/// Probe zombie's IP ID by sending a SYN-ACK (elicits RST with IP ID) via TCP connect.
-/// We use the IP ID from the RST packet the zombie sends back when we probe its open port.
+#[cfg(unix)]
 fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u16, UvError> {
-    // Open raw recv socket
     let sock = unsafe { libc::socket(libc::AF_INET, libc::SOCK_RAW, libc::IPPROTO_TCP) };
     if sock < 0 {
         return Err(UvError::Io(std::io::Error::last_os_error()));
@@ -216,7 +217,6 @@ fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u
         );
     }
 
-    // Send SYN to zombie open port to elicit SYN-ACK (which contains IP ID)
     let probe_sock = unsafe { libc::socket(libc::AF_INET, libc::SOCK_RAW, libc::IPPROTO_RAW) };
     let one: libc::c_int = 1;
     unsafe {
@@ -229,7 +229,6 @@ fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u
         );
     }
 
-    // Use local IP as source for our probe
     let local_ip = local_ip_for(zombie).unwrap_or(Ipv4Addr::UNSPECIFIED);
     let sport = 44444u16;
     let pkt = build_spoofed_syn(local_ip, zombie, sport, zombie_port);
@@ -251,13 +250,13 @@ fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u
         libc::close(probe_sock);
     }
 
-    // Receive SYN-ACK from zombie and extract IP ID
     let mut buf = [0u8; 4096];
     let deadline = std::time::Instant::now() + timeout;
     let mut ipid = None;
 
     while std::time::Instant::now() < deadline {
-        let n = unsafe { libc::recv(sock, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0) };
+        let n =
+            unsafe { libc::recv(sock, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0) };
         if n <= 0 {
             break;
         }
@@ -278,7 +277,6 @@ fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u
         if tcp_src != zombie_port {
             continue;
         }
-        // IP ID is at bytes 4-5 of IP header
         let id = u16::from_be_bytes([pkt[4], pkt[5]]);
         ipid = Some(id);
         break;
@@ -296,7 +294,9 @@ fn probe_ipid(zombie: Ipv4Addr, zombie_port: u16, timeout: Duration) -> Result<u
     })
 }
 
+#[cfg(unix)]
 fn local_ip_for(dst: Ipv4Addr) -> Option<Ipv4Addr> {
+    use std::net::{SocketAddr, UdpSocket};
     let sock = UdpSocket::bind("0.0.0.0:0").ok()?;
     sock.connect(SocketAddr::new(IpAddr::V4(dst), 80)).ok()?;
     match sock.local_addr().ok()? {
@@ -305,6 +305,7 @@ fn local_ip_for(dst: Ipv4Addr) -> Option<Ipv4Addr> {
     }
 }
 
+#[cfg(unix)]
 fn tcp_checksum(src: &[u8; 4], dst: &[u8; 4], tcp: &[u8]) -> u16 {
     let mut sum: u32 = 0;
     sum += u16::from_be_bytes([src[0], src[1]]) as u32;
