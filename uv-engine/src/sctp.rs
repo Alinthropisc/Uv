@@ -290,6 +290,7 @@ fn is_root() -> bool {
 }
 
 #[cfg(not(unix))]
+#[allow(dead_code)]
 fn is_root() -> bool {
     false
 }

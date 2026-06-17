@@ -436,6 +436,7 @@ async fn reverse_dns(ip: IpAddr) -> Option<String> {
     .flatten()
 }
 
+#[cfg(unix)]
 fn getnameinfo(sa: std::net::SocketAddr) -> Option<String> {
     let mut host = [0i8; 256];
     let (addr_ptr, addr_len) = match sa {
@@ -478,7 +479,6 @@ fn getnameinfo(sa: std::net::SocketAddr) -> Option<String> {
             libc::NI_NAMEREQD,
         )
     };
-    // Free the boxed addr
     unsafe { drop(Box::from_raw(addr_ptr as *mut libc::sockaddr_in)) };
     if ret == 0 {
         let cstr = unsafe { std::ffi::CStr::from_ptr(host.as_ptr()) };
@@ -486,6 +486,11 @@ fn getnameinfo(sa: std::net::SocketAddr) -> Option<String> {
     } else {
         None
     }
+}
+
+#[cfg(not(unix))]
+fn getnameinfo(_sa: std::net::SocketAddr) -> Option<String> {
+    None
 }
 
 fn build_fingerprint_from_probes(
