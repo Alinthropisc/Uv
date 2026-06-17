@@ -172,7 +172,7 @@ fn get_interface_index(sock: libc::c_int) -> Option<libc::c_int> {
         let bytes = iface.as_bytes();
         ifr.ifr_name[..bytes.len()]
             .copy_from_slice(&bytes.iter().map(|&b| b as libc::c_char).collect::<Vec<_>>());
-        let ret = unsafe { libc::ioctl(sock, libc::SIOCGIFINDEX, &mut ifr) };
+        let ret = unsafe { libc::ioctl(sock, libc::SIOCGIFINDEX as _, &mut ifr) };
         if ret == 0 {
             return Some(unsafe { ifr.ifr_ifru.ifru_ifindex });
         }
@@ -186,7 +186,7 @@ fn get_interface_mac(sock: libc::c_int, _ifindex: libc::c_int) -> Option<[u8; 6]
     let name = b"eth0\0";
     ifr.ifr_name[..name.len()]
         .copy_from_slice(&name.iter().map(|&b| b as libc::c_char).collect::<Vec<_>>());
-    let ret = unsafe { libc::ioctl(sock, libc::SIOCGIFHWADDR, &mut ifr) };
+    let ret = unsafe { libc::ioctl(sock, libc::SIOCGIFHWADDR as _, &mut ifr) };
     if ret != 0 {
         return Some([0x00, 0x11, 0x22, 0x33, 0x44, 0x55]); // fallback
     }

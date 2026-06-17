@@ -440,13 +440,11 @@ fn getnameinfo(sa: std::net::SocketAddr) -> Option<String> {
     let mut host = [0i8; 256];
     let (addr_ptr, addr_len) = match sa {
         std::net::SocketAddr::V4(v4) => {
-            let raw = libc::sockaddr_in {
-                sin_family: libc::AF_INET as libc::sa_family_t,
-                sin_port: 0,
-                sin_addr: libc::in_addr {
-                    s_addr: u32::from(*v4.ip()).to_be(),
-                },
-                sin_zero: [0; 8],
+            let mut raw: libc::sockaddr_in = unsafe { std::mem::zeroed() };
+            raw.sin_family = libc::AF_INET as libc::sa_family_t;
+            raw.sin_port = 0;
+            raw.sin_addr = libc::in_addr {
+                s_addr: u32::from(*v4.ip()).to_be(),
             };
             let ptr = Box::into_raw(Box::new(raw)) as *const libc::sockaddr;
             (
@@ -456,13 +454,12 @@ fn getnameinfo(sa: std::net::SocketAddr) -> Option<String> {
         }
         std::net::SocketAddr::V6(v6) => {
             let octets = v6.ip().octets();
-            let raw = libc::sockaddr_in6 {
-                sin6_family: libc::AF_INET6 as libc::sa_family_t,
-                sin6_port: 0,
-                sin6_flowinfo: 0,
-                sin6_addr: libc::in6_addr { s6_addr: octets },
-                sin6_scope_id: 0,
-            };
+            let mut raw: libc::sockaddr_in6 = unsafe { std::mem::zeroed() };
+            raw.sin6_family = libc::AF_INET6 as libc::sa_family_t;
+            raw.sin6_port = 0;
+            raw.sin6_flowinfo = 0;
+            raw.sin6_addr = libc::in6_addr { s6_addr: octets };
+            raw.sin6_scope_id = 0;
             let ptr = Box::into_raw(Box::new(raw)) as *const libc::sockaddr;
             (
                 ptr,

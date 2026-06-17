@@ -47,9 +47,9 @@ fn lcg_params(m: u64) -> (u64, u64) {
     let mut tmp = m;
     let mut p = 2u64;
     while p * p <= tmp {
-        if tmp % p == 0 {
+        if tmp.is_multiple_of(p) {
             l = lcm(l, p);
-            while tmp % p == 0 {
+            while tmp.is_multiple_of(p) {
                 tmp /= p;
             }
         }
@@ -58,7 +58,7 @@ fn lcg_params(m: u64) -> (u64, u64) {
     if tmp > 1 {
         l = lcm(l, tmp);
     }
-    if m % 4 == 0 {
+    if m.is_multiple_of(4) {
         l = lcm(l, 4);
     }
     let a = (l + 1) % m;

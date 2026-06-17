@@ -3,7 +3,7 @@ use crate::banner::{BannerParser, ParsedBanner};
 pub struct SslParser;
 
 /// Known TLS ports that imply HTTPS/TLS even without header inspection.
-const TLS_PORTS: &[u16] = &[443, 465, 636, 993, 995, 8443, 9443];
+const TLS_PORTS: &[u16] = &[443, 636, 993, 995];
 
 impl BannerParser for SslParser {
     fn name(&self) -> &'static str {

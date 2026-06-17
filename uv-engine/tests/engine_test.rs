@@ -1,4 +1,4 @@
-use std::net::{IpAddr, SocketAddr, TcpListener};
+use std::net::{IpAddr, TcpListener};
 use uv_core::traits::Scanner;
 use uv_core::types::port::{Port, PortState};
 use uv_core::types::protocol::Protocol;
