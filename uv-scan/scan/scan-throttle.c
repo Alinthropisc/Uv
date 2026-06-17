@@ -5,11 +5,41 @@
 #include <time.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+
+static uint64_t now_ns(void) {
+    LARGE_INTEGER freq, counter;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&counter);
+    return (uint64_t)(counter.QuadPart * 1000000000ULL / freq.QuadPart);
+}
+
+static void portable_sleep_ns(long ns) {
+    /* Windows minimum sleep is ~1ms; use Sleep(0) for tiny waits */
+    if (ns < 1000000L) {
+        SwitchToThread();
+    } else {
+        Sleep((DWORD)(ns / 1000000L));
+    }
+}
+
+#else
+#include <time.h>
+
 static uint64_t now_ns(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
 }
+
+static void portable_sleep_ns(long ns) {
+    struct timespec ts;
+    ts.tv_sec  = 0;
+    ts.tv_nsec = ns;
+    nanosleep(&ts, NULL);
+}
+#endif
 
 void uv_throttle_init(uv_throttle_t *t, uint64_t rate_pps) {
     memset(t, 0, sizeof(*t));
@@ -25,7 +55,7 @@ static void refill(uv_throttle_t *t) {
     uint64_t delta = now - t->last_tick_ns;
     t->last_tick_ns = now;
 
-    /* tokens per ns = rate_pps / 1e9, scaled ×1000 */
+    /* tokens per ns = rate_pps / 1e9, scaled x1000 */
     uint64_t new_tokens = (delta * t->rate_pps) / 1000000ULL;
     t->tokens += new_tokens;
     uint64_t cap = t->burst_max * 1000;
@@ -45,9 +75,7 @@ bool uv_throttle_try(uv_throttle_t *t) {
 void uv_throttle_wait(uv_throttle_t *t) {
     if (t->rate_pps == 0) return;
     while (!uv_throttle_try(t)) {
-        /* spin — in real use combine with epoll/kqueue sleep */
-        struct timespec ns = { .tv_sec = 0, .tv_nsec = 100 };
-        nanosleep(&ns, NULL);
+        portable_sleep_ns(100);
     }
 }
 
@@ -57,5 +85,5 @@ void uv_throttle_set_rate(uv_throttle_t *t, uint64_t rate_pps) {
 }
 
 double uv_throttle_actual_rate(const uv_throttle_t *t) {
-    return (double)t->rate_pps;  /* approximation; real impl would track rolling window */
+    return (double)t->rate_pps;
 }

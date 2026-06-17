@@ -2,13 +2,17 @@
 // Uses raw sockets (AF_INET/SOCK_RAW/IPPROTO_SCTP) — requires root.
 
 use std::net::IpAddr;
+#[cfg(unix)]
 use std::time::Duration;
 
 use async_trait::async_trait;
+#[cfg(unix)]
 use tracing::debug;
 use uv_core::error::{UvError, UvResult};
 use uv_core::traits::Scanner;
-use uv_core::types::port::{Port, PortState};
+#[cfg(unix)]
+use uv_core::types::port::PortState;
+use uv_core::types::port::Port;
 use uv_core::types::protocol::Protocol;
 use uv_core::types::result::ProbeResult;
 
@@ -18,6 +22,7 @@ pub enum SctpMode {
     CookieEcho,
 }
 
+#[allow(dead_code)]
 pub struct SctpScanner {
     mode: SctpMode,
     timeout_ms: u32,
@@ -151,6 +156,7 @@ async fn probe_sctp_cookie_echo(target: IpAddr, port: Port, timeout: Duration) -
     }
 }
 
+#[cfg(unix)]
 fn crc32c(data: &[u8]) -> u32 {
     const POLY: u32 = 0x82F63B78;
     let mut crc: u32 = 0xFFFF_FFFF;
@@ -167,6 +173,7 @@ fn crc32c(data: &[u8]) -> u32 {
     crc ^ 0xFFFF_FFFF
 }
 
+#[cfg(unix)]
 fn ephemeral_port() -> u16 {
     let t = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)

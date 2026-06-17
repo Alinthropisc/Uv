@@ -10,14 +10,18 @@
 //      If ipid2 == ipid1 + 1 → target sent RST to zombie (port CLOSED/FILTERED)
 
 use std::net::{IpAddr, Ipv4Addr};
+#[cfg(unix)]
 use std::time::Duration;
 
 use uv_core::traits::Scanner;
-use uv_core::types::port::{Port, PortState};
+#[cfg(unix)]
+use uv_core::types::port::PortState;
+use uv_core::types::port::Port;
 use uv_core::types::protocol::Protocol;
 use uv_core::types::result::ProbeResult;
 use uv_core::UvError;
 
+#[allow(dead_code)]
 pub struct IdleScanner {
     zombie: Ipv4Addr,
     zombie_port: u16,
