@@ -28,35 +28,42 @@ impl LcgBuilder {
     }
 }
 
+fn gcd(a: u64, b: u64) -> u64 {
+    if b == 0 { a } else { gcd(b, a % b) }
+}
+
+fn lcm(a: u64, b: u64) -> u64 {
+    a / gcd(a, b) * b
+}
+
 /// Compute Hull-Dobell LCG constants for the given range m.
-/// Conditions: a≡1 mod p for every prime p dividing m; a≡1 mod 4 if 4|m; gcd(c,m)=1.
+/// Hull-Dobell theorem: full period iff gcd(c,m)=1; a≡1 mod p for every prime p|m; a≡1 mod 4 if 4|m.
+/// We set a = L+1 where L = lcm of all prime factors of m (and 4 if 4|m), c = 1.
 fn lcg_params(m: u64) -> (u64, u64) {
     if m <= 1 {
         return (1, 0);
     }
-    // Find minimal a satisfying Hull-Dobell over m
-    let mut a: u64 = 1;
-    // multiply (p+1) for each prime factor p of m
+    let mut l: u64 = 1;
     let mut tmp = m;
     let mut p = 2u64;
     while p * p <= tmp {
-        if tmp.is_multiple_of(p) {
-            a = a.wrapping_mul(p + 1);
-            while tmp.is_multiple_of(p) {
+        if tmp % p == 0 {
+            l = lcm(l, p);
+            while tmp % p == 0 {
                 tmp /= p;
             }
         }
         p += 1;
     }
     if tmp > 1 {
-        a = a.wrapping_mul(tmp + 1);
+        l = lcm(l, tmp);
     }
-    if m.is_multiple_of(4) && a % 4 != 1 {
-        a += m / (m / 4);
+    if m % 4 == 0 {
+        l = lcm(l, 4);
     }
-    // c must be odd (coprime with any even m) and non-zero
-    let c = (m / 2) | 1;
-    (a % m.max(1), c % m.max(1))
+    let a = (l + 1) % m;
+    let c = 1u64;
+    (a, c)
 }
 
 /// Stateful LCG iterator — yields all values in [0, range) without repeats.

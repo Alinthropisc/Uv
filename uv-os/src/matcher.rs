@@ -1,6 +1,8 @@
 // OS matcher — Strategy pattern.
 // Scores a live fingerprint against each DB entry.
 
+use std::cmp::Reverse;
+
 use crate::db::OsDb;
 use crate::fingerprint::{OsFingerprint, OsMatch};
 
@@ -34,7 +36,7 @@ impl OsMatcher {
             })
             .collect();
 
-        matches.sort_by(|a, b| b.accuracy.cmp(&a.accuracy));
+        matches.sort_by_key(|b| Reverse(b.accuracy));
         matches.truncate(5);
         matches
     }

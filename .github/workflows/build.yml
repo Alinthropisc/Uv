@@ -7,7 +7,7 @@ jobs:
     env:
       IN_PIPELINE: true
     runs-on: ${{ matrix.os }}
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         type: [ubuntu-x64, ubuntu-x86, armv7, aarch64]
@@ -37,7 +37,7 @@ jobs:
             path: target/aarch64-unknown-linux-gnu/release/uv
             pkg_config_path: /usr/lib/x86_64-linux-gnu/pkgconfig
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: Cache cargo & target directories
         uses: Swatinem/rust-cache@v2
       - name: Build binary
@@ -67,7 +67,7 @@ jobs:
     env:
       IN_PIPELINE: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: Install cargo-deb
         run: cargo install -f cargo-deb
       - uses: awalsh128/cache-apt-pkgs-action@v1
@@ -88,9 +88,9 @@ jobs:
     env:
       IN_PIPELINE: true
     runs-on: macos-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: Cache cargo & target directories
         uses: Swatinem/rust-cache@v2
       - name: Build binary
@@ -117,9 +117,9 @@ jobs:
     env:
       IN_PIPELINE: true
     runs-on: macos-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: Cache cargo & target directories
         uses: Swatinem/rust-cache@v2
       - name: Build binary
@@ -146,7 +146,7 @@ jobs:
     env:
       IN_PIPELINE: true
     runs-on: ${{ matrix.os }}
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         type: [windows-x64, windows-x86]
@@ -162,7 +162,7 @@ jobs:
             name: x86-windows-uv.exe
             path: target\i686-pc-windows-msvc\release\uv.exe
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - name: Cache cargo & target directories
         uses: Swatinem/rust-cache@v2
       - name: Build binary
