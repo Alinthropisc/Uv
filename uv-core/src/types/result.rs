@@ -1,61 +1,61 @@
 use std::net::IpAddr;
 use std::time::Duration;
-
-use super::banner::ServiceInfo;
-use super::port::{Port, PortState};
-use super::protocol::Protocol;
 use serde::{Deserialize, Serialize};
 
+use super::banner::UvServiceInfo;
+use super::port::{UvPort, UvPortState};
+use super::protocol::UvProtocol;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProbeResult {
-    pub port: Port,
-    pub proto: Protocol,
-    pub state: PortState,
+pub struct UvProbeResult {
+    pub port: UvPort,
+    pub proto: UvProtocol,
+    pub state: UvPortState,
     pub rtt: Option<Duration>,
     pub ttl: Option<u8>,
-    pub service: Option<ServiceInfo>,
+    pub service: Option<UvServiceInfo>,
 }
 
-impl ProbeResult {
-    pub fn open(port: Port, proto: Protocol, rtt: Duration) -> Self {
+impl UvProbeResult {
+    pub fn uv_open(port: UvPort, proto: UvProtocol, rtt: Duration) -> Self {
         Self {
             port,
             proto,
-            state: PortState::Open,
+            state: UvPortState::Open,
             rtt: Some(rtt),
             ttl: None,
             service: None,
         }
     }
 
-    pub fn closed(port: Port, proto: Protocol) -> Self {
+    pub fn uv_closed(port: UvPort, proto: UvProtocol) -> Self {
         Self {
             port,
             proto,
-            state: PortState::Closed,
+            state: UvPortState::Closed,
             rtt: None,
             ttl: None,
             service: None,
         }
     }
 
-    pub fn filtered(port: Port, proto: Protocol) -> Self {
+    pub fn uv_filtered(port: UvPort, proto: UvProtocol) -> Self {
         Self {
             port,
             proto,
-            state: PortState::Filtered,
+            state: UvPortState::Filtered,
             rtt: None,
             ttl: None,
             service: None,
         }
     }
 
-    pub fn with_service(mut self, svc: ServiceInfo) -> Self {
+    pub fn uv_with_service(mut self, svc: UvServiceInfo) -> Self {
         self.service = Some(svc);
         self
     }
 
-    pub fn with_ttl(mut self, ttl: u8) -> Self {
+    pub fn uv_with_ttl(mut self, ttl: u8) -> Self {
         self.ttl = Some(ttl);
         self
     }
@@ -63,7 +63,7 @@ impl ProbeResult {
 
 /// Lightweight vuln finding — plain types only, no uv-vuln dep.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct VulnEntry {
+pub struct UvVulnEntry {
     pub check: String,
     pub severity: String,
     pub detail: String,
@@ -72,7 +72,7 @@ pub struct VulnEntry {
 
 /// Lightweight OS match — plain types only, no uv-os dep.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct OsEntry {
+pub struct UvOsEntry {
     pub name: String,
     pub accuracy: u8,
     pub os_class: String,
@@ -80,19 +80,19 @@ pub struct OsEntry {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct HostResult {
+pub struct UvHostResult {
     pub addr: IpAddr,
     pub hostname: Option<String>,
-    pub ports: Vec<ProbeResult>,
+    pub ports: Vec<UvProbeResult>,
     pub latency_ms: Option<u32>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub vulns: Vec<VulnEntry>,
+    pub vulns: Vec<UvVulnEntry>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub os_matches: Vec<OsEntry>,
+    pub os_matches: Vec<UvOsEntry>,
 }
 
-impl HostResult {
-    pub fn new(addr: IpAddr) -> Self {
+impl UvHostResult {
+    pub fn uv_new(addr: IpAddr) -> Self {
         Self {
             addr,
             hostname: None,
@@ -103,30 +103,30 @@ impl HostResult {
         }
     }
 
-    pub fn open_ports(&self) -> impl Iterator<Item = &ProbeResult> {
-        self.ports.iter().filter(|p| p.state == PortState::Open)
+    pub fn uv_open_ports(&self) -> impl Iterator<Item = &UvProbeResult> {
+        self.ports.iter().filter(|p| p.state == UvPortState::Open)
     }
 
-    pub fn has_vulns(&self) -> bool {
+    pub fn uv_has_vulns(&self) -> bool {
         !self.vulns.is_empty()
     }
 
-    pub fn top_os(&self) -> Option<&OsEntry> {
+    pub fn uv_top_os(&self) -> Option<&UvOsEntry> {
         self.os_matches.first()
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ScanResult {
-    pub hosts: Vec<HostResult>,
+pub struct UvScanResult {
+    pub hosts: Vec<UvHostResult>,
     pub duration_ms: u64,
     pub total_probes: u64,
     pub packets_sent: u64,
     pub packets_recv: u64,
 }
 
-impl ScanResult {
-    pub fn new() -> Self {
+impl UvScanResult {
+    pub fn uv_new() -> Self {
         Self {
             hosts: Vec::new(),
             duration_ms: 0,
@@ -136,17 +136,18 @@ impl ScanResult {
         }
     }
 
-    pub fn open_count(&self) -> usize {
-        self.hosts.iter().flat_map(|h| h.open_ports()).count()
+    pub fn uv_open_count(&self) -> usize {
+        self.hosts.iter().flat_map(|h| h.uv_open_ports()).count()
     }
 
-    pub fn vuln_count(&self) -> usize {
+    pub fn uv_vuln_count(&self) -> usize {
         self.hosts.iter().map(|h| h.vulns.len()).sum()
     }
 }
 
-impl Default for ScanResult {
+impl Default for UvScanResult {
     fn default() -> Self {
-        Self::new()
+        
+        Self::uv_new()
     }
 }

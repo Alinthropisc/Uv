@@ -4,12 +4,16 @@ pub use errors::{UvResult, UvErrors, NetworkError, ProtocolError, ScriptError};
 pub mod types;
 pub mod config;
 pub mod scan_type;
-pub use scan_type::ScanType;
+pub use scan_type::UvScanType;
 pub mod timing;
-pub use timing::{TimingParams, TimingTemplate};
+pub use timing::{UvTimingParams, UvTimingTemplate};
 pub mod exclude;
-pub use exclude::{IpExcludeList, PortExcludeList};
+pub use exclude::{UvIpExcludeList, UvPortExcludeList};
 pub mod traits;
+pub mod lynx_contracts;
+pub mod range;
+
+pub use lynx_contracts::{UvLynxDuplex, UvLynxDuplex, UvLynxBoxedStream, UvLynxEndpoint, UvLynxConnectionFactory, UvLynxAcceptor, UvLynxProxyClient, UvLynxAccessControl, UvLynxNullSink, UvLynxEventSink, UvLynxPlugin};
 
 
 pub fn add(left: u64, right: u64) -> u64 {

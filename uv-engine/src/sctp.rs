@@ -8,63 +8,59 @@ use std::time::Duration;
 use async_trait::async_trait;
 #[cfg(unix)]
 use tracing::debug;
-use uv_core::error::{UvError, UvResult};
-use uv_core::traits::Scanner;
+
+use uv_core::errors::{UvErrors, UvResult};
+use uv_core::traits::UvScanner;
 #[cfg(unix)]
-use uv_core::types::port::PortState;
-use uv_core::types::port::Port;
-use uv_core::types::protocol::Protocol;
-use uv_core::types::result::ProbeResult;
+use uv_core::types::port::UvPortState;
+use uv_core::types::port::UvPort;
+use uv_core::types::protocol::UvProtocol;
+use uv_core::types::result::UvProbeResult;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SctpMode {
+pub enum UvSctpMode {
     Init,
     CookieEcho,
 }
 
 #[allow(dead_code)]
-pub struct SctpScanner {
-    mode: SctpMode,
+pub struct UvSctpScanner {
+    mode: UvSctpMode,
     timeout_ms: u32,
 }
 
-impl SctpScanner {
-    pub fn new(mode: SctpMode, timeout_ms: u32) -> Self {
+impl UvSctpScanner {
+    pub fn new(mode: UvSctpMode, timeout_ms: u32) -> Self {
         Self { mode, timeout_ms }
     }
 
     pub fn init(timeout_ms: u32) -> Self {
-        Self::new(SctpMode::Init, timeout_ms)
+        Self::new(UvSctpMode::Init, timeout_ms)
     }
 
     pub fn cookie_echo(timeout_ms: u32) -> Self {
-        Self::new(SctpMode::CookieEcho, timeout_ms)
+        Self::new(UvSctpMode::CookieEcho, timeout_ms)
     }
 }
 
 #[async_trait]
 impl Scanner for SctpScanner {
-    fn protocol(&self) -> Protocol {
+    fn uv_protocol(&self) -> Protocol {
         Protocol::Sctp
     }
 
-    async fn scan(&self, target: IpAddr, ports: &[Port]) -> UvResult<Vec<ProbeResult>> {
+    async fn uv_scan(&self, target: IpAddr, ports: &[Port]) -> UvResult<Vec<ProbeResult>> {
         #[cfg(not(unix))]
         {
             let _ = (target, ports);
-            return Err(UvError::Unsupported(
-                "SCTP scan requires Unix (raw sockets)".into(),
-            ));
+            return Err(UvError::Unsupported("SCTP scan requires Unix (raw sockets)".into(), ));
         }
 
         #[cfg(unix)]
         {
             if !is_root() {
-                return Err(UvError::Permission(
-                    "SCTP scan requires root (raw socket)".into(),
-                ));
+                return Err(UvError::Permission("SCTP scan requires root (raw socket)".into(), ));
             }
-
             let mut results = Vec::with_capacity(ports.len());
             let timeout = Duration::from_millis(self.timeout_ms as u64);
 
@@ -82,19 +78,17 @@ impl Scanner for SctpScanner {
                     service: None,
                 });
             }
-
             Ok(results)
         }
     }
 }
 
 #[cfg(unix)]
-async fn probe_sctp_init(target: IpAddr, port: Port, timeout: Duration) -> PortState {
+async fn probe_sctp_init(target: IpAddr, port: UvPort, timeout: Duration) -> UvPortState {
     let src_port: u16 = ephemeral_port();
     let dst_port: u16 = port.0;
     let vtag: u32 = 0;
     let checksum: u32 = 0;
-
     let mut pkt = [0u8; 32];
     pkt[0..2].copy_from_slice(&src_port.to_be_bytes());
     pkt[2..4].copy_from_slice(&dst_port.to_be_bytes());
@@ -108,51 +102,44 @@ async fn probe_sctp_init(target: IpAddr, port: Port, timeout: Duration) -> PortS
     pkt[24..26].copy_from_slice(&1u16.to_be_bytes());
     pkt[26..28].copy_from_slice(&1u16.to_be_bytes());
     pkt[28..32].copy_from_slice(&1u32.to_be_bytes());
-
     let crc = crc32c(&pkt);
     pkt[8..12].copy_from_slice(&crc.to_be_bytes());
-
-    let result =
-        tokio::task::spawn_blocking(move || send_raw_sctp_and_recv(&pkt, target, timeout)).await;
+    let result = tokio::task::spawn_blocking(move || send_raw_sctp_and_recv(&pkt, target, timeout)).await;
 
     match result {
         Ok(Ok(response)) => classify_sctp_response(&response),
         Ok(Err(e)) => {
             debug!(%target, port = dst_port, err = %e, "SCTP INIT probe error");
-            PortState::Filtered
+            UvPortState::Filtered
         }
-        Err(_) => PortState::Filtered,
+        Err(_) => UvPortState::Filtered,
     }
 }
 
 #[cfg(unix)]
-async fn probe_sctp_cookie_echo(target: IpAddr, port: Port, timeout: Duration) -> PortState {
+async fn probe_sctp_cookie_echo(target: IpAddr, port: UvPort, timeout: Duration) -> UvPortState {
     let src_port: u16 = ephemeral_port();
     let dst_port: u16 = port.0;
-
     let mut pkt = [0u8; 24];
     pkt[0..2].copy_from_slice(&src_port.to_be_bytes());
     pkt[2..4].copy_from_slice(&dst_port.to_be_bytes());
     pkt[12] = 10;
     pkt[13] = 0;
     pkt[14..16].copy_from_slice(&12u16.to_be_bytes());
-
     let crc = crc32c(&pkt);
     pkt[8..12].copy_from_slice(&crc.to_be_bytes());
-
-    let result =
-        tokio::task::spawn_blocking(move || send_raw_sctp_and_recv(&pkt, target, timeout)).await;
+    let result = tokio::task::spawn_blocking(move || send_raw_sctp_and_recv(&pkt, target, timeout)).await;
 
     match result {
         Ok(Ok(response)) => {
             if response.len() >= 13 && response[12] == 6 {
-                PortState::Open
+                UvPortState::Open
             } else {
-                PortState::Filtered
+                UvPortState::Filtered
             }
         }
-        Ok(Err(_)) => PortState::Filtered,
-        Err(_) => PortState::Filtered,
+        Ok(Err(_)) => UvPortState::Filtered,
+        Err(_) => UvPortState::Filtered,
     }
 }
 
@@ -175,31 +162,24 @@ fn crc32c(data: &[u8]) -> u32 {
 
 #[cfg(unix)]
 fn ephemeral_port() -> u16 {
-    let t = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap_or_default()
-        .subsec_nanos();
+    let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().subsec_nanos();
     32768 + (t % 28232) as u16
 }
 
 #[cfg(unix)]
-fn classify_sctp_response(pkt: &[u8]) -> PortState {
+fn classify_sctp_response(pkt: &[u8]) -> UvPortState {
     if pkt.len() < 13 {
-        return PortState::Filtered;
+        return UvPortState::Filtered;
     }
     match pkt[12] {
-        1 => PortState::Open,
-        6 => PortState::Closed,
-        _ => PortState::Filtered,
+        1 => UvPortState::Open,
+        6 => UvPortState::Closed,
+        _ => UvPortState::Filtered,
     }
 }
 
 #[cfg(unix)]
-fn send_raw_sctp_and_recv(
-    pkt: &[u8],
-    target: IpAddr,
-    timeout: Duration,
-) -> Result<Vec<u8>, std::io::Error> {
+fn send_raw_sctp_and_recv(pkt: &[u8], target: IpAddr, timeout: Duration) -> Result<Vec<u8>, std::io::Error> {
     let sock = unsafe {
         let fd = libc_socket(libc_af(target), libc::SOCK_RAW, 132);
         if fd < 0 {
@@ -213,34 +193,26 @@ fn send_raw_sctp_and_recv(
         tv_usec: timeout.subsec_micros() as libc::suseconds_t,
     };
     unsafe {
-        libc::setsockopt(
-            sock,
-            libc::SOL_SOCKET,
-            libc::SO_RCVTIMEO,
-            &tv as *const _ as *const libc::c_void,
-            std::mem::size_of::<libc::timeval>() as libc::socklen_t,
-        );
+        libc::setsockopt(sock, libc::SOL_SOCKET, libc::SO_RCVTIMEO, &tv as *const _ as *const libc::c_void, std::mem::size_of::<libc::timeval>() as libc::socklen_t, );
     }
-
     let dst = sockaddr_for(target, pkt[2] as u16 | ((pkt[3] as u16) << 8));
+    
     let sent = unsafe {
-        libc::sendto(
-            sock,
-            pkt.as_ptr() as *const libc::c_void,
-            pkt.len(),
-            0,
-            &dst as *const _ as *const libc::sockaddr,
-            std::mem::size_of::<libc::sockaddr_in>() as libc::socklen_t,
-        )
+        libc::sendto(sock, pkt.as_ptr() as *const libc::c_void, pkt.len(), 0, &dst as *const _ as *const libc::sockaddr, std::mem::size_of::<libc::sockaddr_in>() as libc::socklen_t, )
     };
     if sent < 0 {
         unsafe { libc::close(sock) };
         return Err(std::io::Error::last_os_error());
     }
-
     let mut buf = vec![0u8; 1500];
-    let n = unsafe { libc::recv(sock, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0) };
-    unsafe { libc::close(sock) };
+    
+    let n = unsafe {
+        libc::recv(sock, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0) 
+    };
+    
+    unsafe { 
+        libc::close(sock) 
+    };
 
     if n < 0 {
         return Err(std::io::Error::last_os_error());

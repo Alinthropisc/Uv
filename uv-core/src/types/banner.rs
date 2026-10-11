@@ -1,38 +1,40 @@
 use serde::{Deserialize, Serialize};
 
-use super::protocol::ServiceKind;
+use super::protocol::UvServiceKind;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Banner {
+pub struct UvBanner {
     pub raw: Vec<u8>,
     pub text: Option<String>,
     pub tls: bool,
 }
 
-impl Banner {
-    pub fn from_bytes(raw: Vec<u8>, tls: bool) -> Self {
-        let text = String::from_utf8(raw.clone())
-            .ok()
-            .map(|s| s.trim().to_owned());
-        Self { raw, text, tls }
+impl UvBanner {
+    pub fn uv_from_bytes(raw: Vec<u8>, tls: bool) -> Self {
+        let text = String::from_utf8(raw.clone()).ok().map(|s| s.trim().to_owned());
+        Self {
+            raw,
+            text,
+            tls
+        }
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub fn uv_is_empty(&self) -> bool {
         self.raw.is_empty()
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ServiceInfo {
-    pub service: ServiceKind,
+pub struct UvServiceInfo {
+    pub service: UvServiceKind,
     pub version: Option<String>,
     pub extra: Option<String>,
-    pub banner: Option<Banner>,
+    pub banner: Option<UvBanner>,
 }
 
-impl ServiceInfo {
-    pub fn new(service: ServiceKind) -> Self {
+impl UvServiceInfo {
+    pub fn uv_new(service: UvServiceKind) -> Self {
         Self {
             service,
             version: None,
@@ -41,12 +43,12 @@ impl ServiceInfo {
         }
     }
 
-    pub fn with_banner(mut self, banner: Banner) -> Self {
+    pub fn uv_with_banner(mut self, banner: UvBanner) -> Self {
         self.banner = Some(banner);
         self
     }
 
-    pub fn with_version(mut self, ver: impl Into<String>) -> Self {
+    pub fn uv_with_version(mut self, ver: impl Into<String>) -> Self {
         self.version = Some(ver.into());
         self
     }

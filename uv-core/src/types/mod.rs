@@ -5,9 +5,9 @@ pub mod protocol;
 pub mod reason;
 pub mod result;
 
-pub use banner::{Banner, ServiceInfo};
-pub use ip::{CidrRange, IpTarget};
-pub use port::{Port, PortRange, PortState};
-pub use protocol::{Protocol, ServiceKind};
-pub use reason::StateReason;
-pub use result::{HostResult, ProbeResult, ScanResult};
+pub use banner::{UvBanner, UvServiceInfo};
+pub use ip::{UvCidrRange, UvIpTarget};
+pub use port::{UvPort, UvPortRange, UvPortState};
+pub use protocol::{UvProtocol, UvServiceKind};
+pub use reason::UvStateReason;
+pub use result::{UvHostResult, UvProbeResult, UvScanResult};

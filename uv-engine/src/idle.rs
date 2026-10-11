@@ -13,13 +13,13 @@ use std::net::{IpAddr, Ipv4Addr};
 #[cfg(unix)]
 use std::time::Duration;
 
-use uv_core::traits::Scanner;
+use uv_core::traits::UvScanner;
 #[cfg(unix)]
-use uv_core::types::port::PortState;
-use uv_core::types::port::Port;
-use uv_core::types::protocol::Protocol;
-use uv_core::types::result::ProbeResult;
-use uv_core::UvError;
+use uv_core::types::port::UvPortState;
+use uv_core::types::port::UvPort;
+use uv_core::types::protocol::UvProtocol;
+use uv_core::types::result::UvProbeResult;
+use uv_core::errors::UvErrors;
 
 #[allow(dead_code)]
 pub struct IdleScanner {

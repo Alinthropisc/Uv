@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub enum TimingTemplate {
+pub enum UvTimingTemplate {
     /// T0 — Paranoid: 100 pps, 5000ms timeout, serial, min 5s between probes.
     T0,
     /// T1 — Sneaky: 1_000 pps, 3000ms, low concurrency.
@@ -18,7 +18,7 @@ pub enum TimingTemplate {
 }
 
 #[derive(Debug, Clone)]
-pub struct TimingParams {
+pub struct UvTimingParams {
     pub rate_pps: u64,
     pub timeout_ms: u32,
     pub concurrency: usize,
@@ -27,10 +27,10 @@ pub struct TimingParams {
     pub scan_delay_ms: u32, // min delay between probes to same host
 }
 
-impl TimingTemplate {
-    pub fn params(self) -> TimingParams {
+impl UvTimingTemplate {
+    pub fn uv_params(self) -> UvTimingParams {
         match self {
-            TimingTemplate::T0 => TimingParams {
+            UvTimingTemplate::T0 => UvTimingParams {
                 rate_pps: 100,
                 timeout_ms: 5_000,
                 concurrency: 1,
@@ -38,7 +38,7 @@ impl TimingTemplate {
                 max_retries: 5,
                 scan_delay_ms: 5_000,
             },
-            TimingTemplate::T1 => TimingParams {
+            UvTimingTemplate::T1 => UvTimingParams {
                 rate_pps: 1_000,
                 timeout_ms: 3_000,
                 concurrency: 8,
@@ -46,7 +46,7 @@ impl TimingTemplate {
                 max_retries: 3,
                 scan_delay_ms: 1_000,
             },
-            TimingTemplate::T2 => TimingParams {
+            UvTimingTemplate::T2 => UvTimingParams {
                 rate_pps: 10_000,
                 timeout_ms: 2_000,
                 concurrency: 64,
@@ -54,7 +54,7 @@ impl TimingTemplate {
                 max_retries: 2,
                 scan_delay_ms: 400,
             },
-            TimingTemplate::T3 => TimingParams {
+            UvTimingTemplate::T3 => UvTimingParams {
                 rate_pps: 100_000,
                 timeout_ms: 1_500,
                 concurrency: 256,
@@ -62,7 +62,7 @@ impl TimingTemplate {
                 max_retries: 1,
                 scan_delay_ms: 0,
             },
-            TimingTemplate::T4 => TimingParams {
+            UvTimingTemplate::T4 => UvTimingParams {
                 rate_pps: 1_000_000,
                 timeout_ms: 500,
                 concurrency: 512,
@@ -70,7 +70,7 @@ impl TimingTemplate {
                 max_retries: 1,
                 scan_delay_ms: 0,
             },
-            TimingTemplate::T5 => TimingParams {
+            UvTimingTemplate::T5 => UvTimingParams {
                 rate_pps: 10_000_000,
                 timeout_ms: 200,
                 concurrency: 1024,
@@ -81,7 +81,7 @@ impl TimingTemplate {
         }
     }
 
-    pub fn parse(s: &str) -> Option<Self> {
+    pub fn uv_parse(s: &str) -> Option<Self> {
         match s {
             "0" | "T0" | "paranoid" => Some(Self::T0),
             "1" | "T1" | "sneaky" => Some(Self::T1),
@@ -93,7 +93,7 @@ impl TimingTemplate {
         }
     }
 
-    pub fn label(self) -> &'static str {
+    pub fn uv_label(self) -> &'static str {
         match self {
             Self::T0 => "T0 (paranoid)",
             Self::T1 => "T1 (sneaky)",

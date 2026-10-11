@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 /// The packet or event that caused the port state classification.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum StateReason {
+pub enum UvStateReason {
     /// SYN-ACK received → open
     SynAck,
     /// RST received → closed
@@ -40,8 +40,8 @@ pub enum StateReason {
     Unknown,
 }
 
-impl StateReason {
-    pub fn label(self) -> &'static str {
+impl UvStateReason {
+    pub fn uv_label(self) -> &'static str {
         match self {
             Self::SynAck => "syn-ack",
             Self::Rst => "rst",
@@ -63,27 +63,17 @@ impl StateReason {
     }
 
     /// Returns true if this reason implies the port is open.
-    pub fn is_open(self) -> bool {
-        matches!(
-            self,
-            Self::SynAck
-                | Self::TcpConnect
-                | Self::AckWindow
-                | Self::SctpInitAck
-                | Self::UdpResponse
-        )
+    pub fn uv_is_open(self) -> bool {
+        matches!(self,Self::SynAck | Self::TcpConnect | Self::AckWindow | Self::SctpInitAck | Self::UdpResponse)
     }
 
     /// Returns true if this reason implies the port is closed.
-    pub fn is_closed(self) -> bool {
-        matches!(
-            self,
-            Self::Rst | Self::IcmpPortUnreach | Self::ConnRefused | Self::SctpAbort
-        )
+    pub fn uv_is_closed(self) -> bool {
+        matches!(self,Self::Rst | Self::IcmpPortUnreach | Self::ConnRefused | Self::SctpAbort)
     }
 
     /// From ICMP type+code pair.
-    pub fn from_icmp(icmp_type: u8, icmp_code: u8) -> Self {
+    pub fn uv_from_icmp(icmp_type: u8, icmp_code: u8) -> Self {
         match (icmp_type, icmp_code) {
             (3, 3) => Self::IcmpPortUnreach,
             (3, 0) => Self::IcmpNetUnreach,
@@ -95,8 +85,8 @@ impl StateReason {
     }
 }
 
-impl std::fmt::Display for StateReason {
+impl std::fmt::Display for UvStateReason {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.label())
+        write!(f, "{}", self.uv_label())
     }
 }

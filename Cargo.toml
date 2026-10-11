@@ -6,6 +6,7 @@ members = [
     "uv-crypto",
     "uv-net",
     "uv-proto",
+    "uv-lynx",
 ]
 resolver = "2"
 
@@ -17,6 +18,13 @@ keywords = ["security", "pentesting", "network", "authentication", "research"]
 categories = ["network-programming", "command-line-utilities"]
 
 [workspace.dependencies]
+uv-core = { path = "uv-core" }
+uv-engine = { path = "uv-engine" }
+uv-support = { path = "uv-support" }
+uv-crypto = { path = "uv-crypto" }
+uv-net = { path = "uv-net" }
+uv-proto = { path = "uv-proto" }
+uv-lynx = { path = "uv-lynx" }
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json", "fmt"] }

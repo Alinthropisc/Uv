@@ -2,25 +2,21 @@
 // Used by IP protocol scan (-sO) to label raw IP protocol numbers.
 
 /// Returns the name for an IP protocol number.
-pub fn ip_proto_name(proto: u8) -> &'static str {
-    PROTO_NAMES
-        .iter()
-        .find(|(n, _)| *n == proto)
-        .map(|(_, name)| *name)
-        .unwrap_or("unknown")
+pub fn uv_ip_proto_name(proto: u8) -> &'static str {
+    UV_PROTO_NAMES.iter().find(|(n, _)| *n == proto).map(|(_, name)| *name).unwrap_or("unknown")
 }
 
 /// Returns all (proto_num, name) pairs.
-pub fn all_ip_protos() -> &'static [(u8, &'static str)] {
-    PROTO_NAMES
+pub fn uv_all_ip_protos() -> &'static [(u8, &'static str)] {
+    UV_PROTO_NAMES
 }
 
 /// Check if a protocol number is TCP-like (has ports).
-pub fn has_ports(proto: u8) -> bool {
+pub fn uv_has_ports(proto: u8) -> bool {
     matches!(proto, 6 | 17 | 132 | 33 | 136)
 }
 
-static PROTO_NAMES: &[(u8, &str)] = &[
+static UV_PROTO_NAMES: &[(u8, &str)] = &[
     (0,   "hopopt"),
     (1,   "icmp"),
     (2,   "igmp"),
@@ -102,14 +98,14 @@ mod tests {
 
     #[test]
     fn known_protos() {
-        assert_eq!(ip_proto_name(6), "tcp");
-        assert_eq!(ip_proto_name(17), "udp");
-        assert_eq!(ip_proto_name(89), "ospf");
-        assert_eq!(ip_proto_name(47), "gre");
+        assert_eq!(uv_ip_proto_name(6), "tcp");
+        assert_eq!(uv_ip_proto_name(17), "udp");
+        assert_eq!(uv_ip_proto_name(89), "ospf");
+        assert_eq!(uv_ip_proto_name(47), "gre");
     }
 
     #[test]
     fn unknown_proto() {
-        assert_eq!(ip_proto_name(200), "unknown");
+        assert_eq!(uv_ip_proto_name(200), "unknown");
     }
 }

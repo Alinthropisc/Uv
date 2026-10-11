@@ -5,16 +5,16 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 /// SPSC lock-free ring buffer.
-pub struct Ring<T> {
+pub struct UvRing<T> {
     buf: Vec<Option<T>>,
     mask: usize,
     head: AtomicUsize, // producer writes here
     tail: AtomicUsize, // consumer reads here
 }
 
-impl<T: Send> Ring<T> {
+impl<T: Send> UvRing<T> {
     /// Create a ring of capacity rounded up to the next power of 2.
-    pub fn new(capacity: usize) -> Self {
+    pub fn uv_new(capacity: usize) -> Self {
         let cap = capacity.next_power_of_two();
         let mut buf = Vec::with_capacity(cap);
         for _ in 0..cap {
@@ -29,12 +29,10 @@ impl<T: Send> Ring<T> {
     }
 
     /// Try to push an item. Returns `Err(item)` if the ring is full.
-    pub fn push(&self, item: T) -> Result<(), T> {
+    pub fn uv_push(&self, item: T) -> Result<(), T> {
         let head = self.head.load(Ordering::Relaxed);
         let next_head = head.wrapping_add(1);
-        if next_head & self.mask == self.tail.load(Ordering::Acquire) & self.mask
-            && next_head != self.tail.load(Ordering::Acquire)
-        {
+        if next_head & self.mask == self.tail.load(Ordering::Acquire) & self.mask && next_head != self.tail.load(Ordering::Acquire) {
             // Full — but check more carefully
             if (head.wrapping_sub(self.tail.load(Ordering::Acquire))) >= self.mask {
                 return Err(item);
@@ -48,8 +46,9 @@ impl<T: Send> Ring<T> {
     }
 
     /// Try to pop an item. Returns `None` if the ring is empty.
-    pub fn pop(&self) -> Option<T> {
+    pub fn uv_pop(&self) -> Option<T> {
         let tail = self.tail.load(Ordering::Relaxed);
+        
         if tail == self.head.load(Ordering::Acquire) {
             return None; // empty
         }
@@ -60,22 +59,22 @@ impl<T: Send> Ring<T> {
     }
 
     /// Returns the number of items currently in the ring.
-    pub fn len(&self) -> usize {
+    pub fn uv_len(&self) -> usize {
         let head = self.head.load(Ordering::Relaxed);
         let tail = self.tail.load(Ordering::Relaxed);
         head.wrapping_sub(tail) & (self.mask * 2 + 1)
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub fn uv_is_empty(&self) -> bool {
         self.head.load(Ordering::Relaxed) == self.tail.load(Ordering::Relaxed)
     }
 
-    pub fn capacity(&self) -> usize {
+    pub fn uv_capacity(&self) -> usize {
         self.mask + 1
     }
 }
 
-unsafe impl<T: Send> Sync for Ring<T> {}
+unsafe impl<T: Send> Sync for UvRing<T> {}
 
 #[cfg(test)]
 mod tests {
@@ -83,17 +82,17 @@ mod tests {
 
     #[test]
     fn push_pop() {
-        let ring: Ring<u32> = Ring::new(8);
-        assert!(ring.push(1).is_ok());
-        assert!(ring.push(2).is_ok());
-        assert_eq!(ring.pop(), Some(1));
-        assert_eq!(ring.pop(), Some(2));
-        assert_eq!(ring.pop(), None);
+        let ring: UvRing<u32> = UvRing::uv_new(8);
+        assert!(ring.uv_push(1).is_ok());
+        assert!(ring.uv_push(2).is_ok());
+        assert_eq!(ring.uv_pop(), Some(1));
+        assert_eq!(ring.uv_pop(), Some(2));
+        assert_eq!(ring.uv_pop(), None);
     }
 
     #[test]
     fn capacity_power_of_two() {
-        let ring: Ring<u8> = Ring::new(5);
-        assert_eq!(ring.capacity(), 8);
+        let ring: UvRing<u8> = UvRing::uv_new(5);
+        assert_eq!(ring.uv_capacity(), 8);
     }
 }

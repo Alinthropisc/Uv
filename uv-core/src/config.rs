@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ScanConfig {
+pub struct UvScanConfig {
     pub batch_size: usize,
     pub timeout_ms: u32,
     pub tries: u8,
@@ -15,7 +15,7 @@ pub struct ScanConfig {
     pub config_path: Option<PathBuf>,
 }
 
-impl Default for ScanConfig {
+impl Default for UvScanConfig {
     fn default() -> Self {
         Self {
             batch_size: 4500,
@@ -33,13 +33,13 @@ impl Default for ScanConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProbeConfig {
+pub struct UvProbeConfig {
     pub banner_timeout_ms: u32,
     pub tls_enabled: bool,
     pub max_banner_bytes: usize,
 }
 
-impl Default for ProbeConfig {
+impl Default for UvProbeConfig {
     fn default() -> Self {
         Self {
             banner_timeout_ms: 2000,
@@ -50,12 +50,12 @@ impl Default for ProbeConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RateConfig {
+pub struct UvRateConfig {
     pub pps: u64,
     pub burst_size: u64,
 }
 
-impl Default for RateConfig {
+impl Default for UvRateConfig {
     fn default() -> Self {
         Self {
             pps: 10_000_000,

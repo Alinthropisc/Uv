@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub enum ScanType {
+pub enum UvScanType {
     /// TCP connect() — works without root. Default for non-privileged users.
     #[default]
     TcpConnect,
@@ -32,8 +32,8 @@ pub enum ScanType {
     IpProto,
 }
 
-impl ScanType {
-    pub fn needs_root(self) -> bool {
+impl UvScanType {
+    pub fn uv_needs_root(self) -> bool {
         matches!(self,Self::SynStealth
                 | Self::Null
                 | Self::Fin
@@ -47,15 +47,15 @@ impl ScanType {
                 | Self::IpProto)
     }
 
-    pub fn is_tcp(self) -> bool {
+    pub fn uv_is_tcp(self) -> bool {
         !matches!(self, Self::Udp | Self::PingSweep | Self::SctpInit | Self::SctpCookieEcho)
     }
 
-    pub fn is_sctp(self) -> bool {
+    pub fn uv_is_sctp(self) -> bool {
         matches!(self, Self::SctpInit | Self::SctpCookieEcho)
     }
 
-    pub fn label(self) -> &'static str {
+    pub fn uv_label(self) -> &'static str {
         match self {
             Self::TcpConnect => "TCP Connect (-sT)",
             Self::SynStealth => "SYN Stealth (-sS)",
@@ -73,7 +73,7 @@ impl ScanType {
         }
     }
 
-    pub fn from_flag(s: &str) -> Option<Self> {
+    pub fn uv_from_flag(s: &str) -> Option<Self> {
         match s {
             "sT" | "connect" => Some(Self::TcpConnect),
             "sS" | "syn" => Some(Self::SynStealth),

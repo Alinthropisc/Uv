@@ -1,31 +1,31 @@
 use async_trait::async_trait;
 use std::net::IpAddr;
 
-use crate::error::UvResult;
-use crate::types::port::Port;
-use crate::types::protocol::Protocol;
-use crate::types::result::{ProbeResult, ScanResult};
+use crate::errors::UvResult;
+use crate::types::port::UvPort;
+use crate::types::protocol::UvProtocol;
+use crate::types::result::{UvProbeResult, UvScanResult};
 
 
 #[async_trait]
-pub trait Scanner: Send + Sync {
-    async fn scan(&self, target: IpAddr, ports: &[Port]) -> UvResult<Vec<ProbeResult>>;
-    fn protocol(&self) -> Protocol;
+pub trait UvScanner: Send + Sync {
+    async fn uv_scan(&self, target: IpAddr, ports: &[UvPort]) -> UvResult<Vec<UvProbeResult>>;
+    fn uv_protocol(&self) -> UvProtocol;
 }
 
 #[async_trait]
-pub trait BannerGrabber: Send + Sync {
-    async fn grab(&self,target: IpAddr,port: Port,proto: Protocol,) -> UvResult<Option<crate::types::banner::ServiceInfo>>;
+pub trait UvBannerGrabber: Send + Sync {
+    async fn uv_grab(&self,target: IpAddr,port: UvPort,proto: UvProtocol,) -> UvResult<Option<crate::types::banner::UvServiceInfo>>;
 }
 
-pub trait ResultSink: Send + Sync {
-    fn push(&mut self, result: ProbeResult, host: IpAddr);
-    fn finalize(self) -> ScanResult;
+pub trait UvResultSink: Send + Sync {
+    fn uv_push(&mut self, result: UvProbeResult, host: IpAddr);
+    fn uv_finalize(self) -> UvScanResult;
 }
 
-pub trait RateLimiter: Send + Sync {
-    fn acquire(&self, n: u32) -> UvResult<()>;
-    fn rate_pps(&self) -> u64;
+pub trait UvRateLimiter: Send + Sync {
+    fn uv_acquire(&self, n: u32) -> UvResult<()>;
+    fn uv_rate_pps(&self) -> u64;
 }
 
 

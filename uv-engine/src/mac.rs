@@ -3,24 +3,18 @@
 
 /// Look up the vendor name for a MAC address by its first 3 bytes (OUI).
 /// Returns `None` if the OUI is not in the built-in table.
-pub fn oui_vendor(mac: &[u8; 6]) -> Option<&'static str> {
+pub fn uv_oui_vendor(mac: &[u8; 6]) -> Option<&'static str> {
     let oui = ((mac[0] as u32) << 16) | ((mac[1] as u32) << 8) | (mac[2] as u32);
-    OUI_TABLE
-        .iter()
-        .find(|(prefix, _)| *prefix == oui)
-        .map(|(_, vendor)| *vendor)
+    UV_OUI_TABLE.iter().find(|(prefix, _)| *prefix == oui).map(|(_, vendor)| *vendor)
 }
 
 /// Format a MAC address as "AA:BB:CC:DD:EE:FF".
-pub fn format_mac(mac: &[u8; 6]) -> String {
-    format!(
-        "{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
-        mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]
-    )
+pub fn uv_format_mac(mac: &[u8; 6]) -> String {
+    format!("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5])
 }
 
 // (OUI u24, vendor name)
-static OUI_TABLE: &[(u32, &str)] = &[
+static UV_OUI_TABLE: &[(u32, &str)] = &[
     (0x000000, "Xerox"),
     (0x000C29, "VMware"),
     (0x000D3A, "Microsoft (Azure)"),

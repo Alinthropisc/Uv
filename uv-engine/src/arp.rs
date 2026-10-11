@@ -8,35 +8,30 @@ use std::time::Duration;
 
 /// Result of an ARP lookup.
 #[derive(Debug, Clone)]
-pub struct ArpResult {
+pub struct UvArpResult {
     pub ip: Ipv4Addr,
     pub mac: [u8; 6],
     pub vendor: Option<&'static str>,
 }
 
-impl ArpResult {
-    pub fn mac_str(&self) -> String {
+impl UvArpResult {
+    pub fn uv_mac_str(&self) -> String {
         crate::mac::format_mac(&self.mac)
     }
 }
 
 /// Resolve a local IPv4 address to its MAC via ARP.
 /// Returns None if the host doesn't respond within `timeout_ms`.
-pub async fn arp_resolve(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
-    tokio::task::spawn_blocking(move || arp_blocking(target, timeout_ms))
-        .await
-        .ok()
-        .flatten()
+pub async fn uv_arp_resolve(target: Ipv4Addr, timeout_ms: u32) -> Option<UvArpResult> {
+    tokio::task::spawn_blocking(move || arp_blocking(target, timeout_ms)).await.ok().flatten()
 }
 
 /// Resolve multiple IPs concurrently.
-pub async fn arp_sweep(targets: &[Ipv4Addr], timeout_ms: u32) -> Vec<ArpResult> {
+pub async fn uv_arp_sweep(targets: &[Ipv4Addr], timeout_ms: u32) -> Vec<UvArpResult> {
     use futures::stream::{FuturesUnordered, StreamExt};
-    let mut tasks: FuturesUnordered<_> = targets
-        .iter()
-        .map(|&ip| arp_resolve(ip, timeout_ms))
-        .collect();
+    let mut tasks: FuturesUnordered<_> = targets.iter().map(|&ip| arp_resolve(ip, timeout_ms)).collect();
     let mut results = Vec::new();
+    
     while let Some(r) = tasks.next().await {
         if let Some(res) = r {
             results.push(res);
@@ -46,21 +41,17 @@ pub async fn arp_sweep(targets: &[Ipv4Addr], timeout_ms: u32) -> Vec<ArpResult> 
 }
 
 #[cfg(target_os = "linux")]
-fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
+fn uv_arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<UvArpResult> {
     let timeout = Duration::from_millis(timeout_ms as u64);
 
     // Open raw socket for ARP (ETH_P_ARP = 0x0806)
     let sock = unsafe {
-        libc::socket(
-            libc::AF_PACKET,
-            libc::SOCK_RAW,
-            (0x0806u16).to_be() as libc::c_int,
-        )
+        libc::socket(libc::AF_PACKET, libc::SOCK_RAW, (0x0806u16).to_be() as libc::c_int, )
     };
+    
     if sock < 0 {
         return None;
     }
-
     let ifindex = get_interface_index(sock)?;
     let src_mac = get_interface_mac(sock, ifindex)?;
     let src_ip = get_source_ip(target)?;
@@ -76,11 +67,7 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         sll_addr: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0, 0],
     };
     unsafe {
-        libc::bind(
-            sock,
-            &sll as *const _ as *const libc::sockaddr,
-            std::mem::size_of::<libc::sockaddr_ll>() as libc::socklen_t,
-        );
+        libc::bind(sock, &sll as *const _ as *const libc::sockaddr, std::mem::size_of::<libc::sockaddr_ll>() as libc::socklen_t, );
     }
 
     unsafe {
@@ -92,32 +79,29 @@ fn arp_blocking(target: Ipv4Addr, timeout_ms: u32) -> Option<ArpResult> {
         tv_usec: (timeout.subsec_millis() as libc::suseconds_t) * 1000,
     };
     unsafe {
-        libc::setsockopt(
-            sock,
-            libc::SOL_SOCKET,
-            libc::SO_RCVTIMEO,
-            &tv as *const _ as *const libc::c_void,
-            std::mem::size_of::<libc::timeval>() as libc::socklen_t,
-        );
+        libc::setsockopt(sock, libc::SOL_SOCKET, libc::SO_RCVTIMEO, &tv as *const _ as *const libc::c_void, std::mem::size_of::<libc::timeval>() as libc::socklen_t, );
     }
-
     let mut buf = [0u8; 60];
     let deadline = std::time::Instant::now() + timeout;
     let mut found = None;
 
     while std::time::Instant::now() < deadline {
-        let n = unsafe { libc::recv(sock, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0) };
+        let n = unsafe {
+            libc::recv(sock, buf.as_mut_ptr() as *mut libc::c_void, buf.len(), 0)
+        };
+        
         if n < 42 {
             break;
         }
         let arp = &buf[14..];
+        
         if arp.len() >= 28 && arp[6] == 0x00 && arp[7] == 0x02 {
             let sender_ip = Ipv4Addr::new(arp[14], arp[15], arp[16], arp[17]);
             if sender_ip == target {
                 let mut mac = [0u8; 6];
                 mac.copy_from_slice(&arp[8..14]);
                 let vendor = crate::mac::oui_vendor(&mac);
-                found = Some(ArpResult {
+                found = Some(UvArpResult {
                     ip: target,
                     mac,
                     vendor,
@@ -140,7 +124,7 @@ fn arp_blocking(_target: Ipv4Addr, _timeout_ms: u32) -> Option<ArpResult> {
 
 /// Build a raw ARP request Ethernet frame.
 #[cfg(target_os = "linux")]
-fn build_arp_request(src_mac: &[u8; 6], src_ip: Ipv4Addr, dst_ip: Ipv4Addr) -> Vec<u8> {
+fn uv_build_arp_request(src_mac: &[u8; 6], src_ip: Ipv4Addr, dst_ip: Ipv4Addr) -> Vec<u8> {
     let mut pkt = vec![0u8; 42]; // 14 Ethernet + 28 ARP
 
     // Ethernet header
@@ -167,14 +151,17 @@ fn build_arp_request(src_mac: &[u8; 6], src_ip: Ipv4Addr, dst_ip: Ipv4Addr) -> V
 }
 
 #[cfg(target_os = "linux")]
-fn get_interface_index(sock: libc::c_int) -> Option<libc::c_int> {
+fn uv_get_interface_index(sock: libc::c_int) -> Option<libc::c_int> {
     let mut ifr: libc::ifreq = unsafe { std::mem::zeroed() };
     // Try eth0, then ens33, then enp0s3
     for iface in &["eth0\0", "ens33\0", "enp0s3\0", "wlan0\0"] {
         let bytes = iface.as_bytes();
-        ifr.ifr_name[..bytes.len()]
-            .copy_from_slice(&bytes.iter().map(|&b| b as libc::c_char).collect::<Vec<_>>());
-        let ret = unsafe { libc::ioctl(sock, libc::SIOCGIFINDEX as _, &mut ifr) };
+        ifr.ifr_name[..bytes.len()].copy_from_slice(&bytes.iter().map(|&b| b as libc::c_char).collect::<Vec<_>>());
+        
+        let ret = unsafe {
+            libc::ioctl(sock, libc::SIOCGIFINDEX as _, &mut ifr)
+        };
+        
         if ret == 0 {
             return Some(unsafe { ifr.ifr_ifru.ifru_ifindex });
         }
@@ -183,16 +170,20 @@ fn get_interface_index(sock: libc::c_int) -> Option<libc::c_int> {
 }
 
 #[cfg(target_os = "linux")]
-fn get_interface_mac(sock: libc::c_int, _ifindex: libc::c_int) -> Option<[u8; 6]> {
+fn uv_get_interface_mac(sock: libc::c_int, _ifindex: libc::c_int) -> Option<[u8; 6]> {
     let mut ifr: libc::ifreq = unsafe { std::mem::zeroed() };
     let name = b"eth0\0";
-    ifr.ifr_name[..name.len()]
-        .copy_from_slice(&name.iter().map(|&b| b as libc::c_char).collect::<Vec<_>>());
-    let ret = unsafe { libc::ioctl(sock, libc::SIOCGIFHWADDR as _, &mut ifr) };
+    ifr.ifr_name[..name.len()].copy_from_slice(&name.iter().map(|&b| b as libc::c_char).collect::<Vec<_>>());
+    let ret = unsafe { 
+        libc::ioctl(sock, libc::SIOCGIFHWADDR as _, &mut ifr)
+    };
+    
     if ret != 0 {
         return Some([0x00, 0x11, 0x22, 0x33, 0x44, 0x55]); // fallback
     }
-    let addr = unsafe { ifr.ifr_ifru.ifru_hwaddr.sa_data };
+    let addr = unsafe { 
+        ifr.ifr_ifru.ifru_hwaddr.sa_data 
+    };
     Some([
         addr[0] as u8,
         addr[1] as u8,
@@ -204,11 +195,11 @@ fn get_interface_mac(sock: libc::c_int, _ifindex: libc::c_int) -> Option<[u8; 6]
 }
 
 #[cfg(target_os = "linux")]
-fn get_source_ip(dst: Ipv4Addr) -> Option<Ipv4Addr> {
+fn uv_get_source_ip(dst: Ipv4Addr) -> Option<Ipv4Addr> {
     use std::net::{SocketAddr, UdpSocket};
     let sock = UdpSocket::bind("0.0.0.0:0").ok()?;
-    sock.connect(SocketAddr::new(std::net::IpAddr::V4(dst), 80))
-        .ok()?;
+    sock.connect(SocketAddr::new(std::net::IpAddr::V4(dst), 80)).ok()?;
+    
     match sock.local_addr().ok()? {
         SocketAddr::V4(v4) => Some(*v4.ip()),
         _ => None,

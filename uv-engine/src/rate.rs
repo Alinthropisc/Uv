@@ -1,13 +1,14 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::Instant;
-use uv_core::error::{UvError, UvResult};
-use uv_core::traits::RateLimiter;
+
+use uv_core::errors::{UvErrors, UvResult};
+use uv_core::traits::UvRateLimiter;
 
 /// Lock-free token-bucket rate limiter.
 /// Tokens are stored as integer micro-tokens (×1000) to avoid floating-point.
 /// CAS loop ensures no double-spend under contention.
-pub struct TokenBucketLimiter {
+pub struct UvTokenBucketLimiter {
     pps: u64,
     burst: u64,
     /// Stored as count × 1000 (milli-tokens)
@@ -15,8 +16,8 @@ pub struct TokenBucketLimiter {
     last_refill: std::sync::Mutex<Instant>,
 }
 
-impl TokenBucketLimiter {
-    pub fn new(pps: u64, burst: u64) -> Self {
+impl UvTokenBucketLimiter {
+    pub fn uv_new(pps: u64, burst: u64) -> Self {
         Self {
             pps,
             burst,
@@ -26,47 +27,42 @@ impl TokenBucketLimiter {
     }
 
     /// Convenience: burst = 10% of pps (100ms burst window).
-    pub fn with_rate(pps: u64) -> Self {
-        Self::new(pps, (pps / 10).max(1))
+    pub fn uv_with_rate(pps: u64) -> Self {
+        Self::uv_new(pps, (pps / 10).max(1))
     }
 
-    fn refill(&self) {
+    fn uv_refill(&self) {
         let mut last = self.last_refill.lock().unwrap();
         let now = Instant::now();
         let elapsed = now.duration_since(*last).as_secs_f64();
         let new_m = (elapsed * self.pps as f64 * 1000.0) as u64;
         if new_m > 0 {
             let cap = self.burst * 1000;
-            self.tokens_m
-                .fetch_update(Ordering::AcqRel, Ordering::Relaxed, |cur| {
-                    Some((cur + new_m).min(cap))
-                })
-                .ok();
+            self.tokens_m.fetch_update(Ordering::AcqRel, Ordering::Relaxed, |cur| {
+                Some((cur + new_m).min(cap))
+            }).ok();
             *last = now;
         }
     }
 }
 
-impl RateLimiter for TokenBucketLimiter {
-    fn acquire(&self, n: u32) -> UvResult<()> {
+impl UvRateLimiter for UvTokenBucketLimiter {
+    fn uv_acquire(&self, n: u32) -> UvResult<()> {
         let need = n as u64 * 1000;
+        
         if need > self.burst * 1000 {
-            return Err(UvError::RateOverflow {
+            return Err(UvErrors::RateOverflow {
                 requested: n,
                 cap: self.burst,
             });
         }
 
         loop {
-            self.refill();
+            self.uv_refill();
             let cur = self.tokens_m.load(Ordering::Relaxed);
+            
             if cur >= need {
-                match self.tokens_m.compare_exchange(
-                    cur,
-                    cur - need,
-                    Ordering::AcqRel,
-                    Ordering::Relaxed,
-                ) {
+                match self.tokens_m.compare_exchange(cur, cur - need, Ordering::AcqRel, Ordering::Relaxed) {
                     Ok(_) => return Ok(()),
                     Err(_) => continue, // lost CAS race, retry
                 }
@@ -76,7 +72,7 @@ impl RateLimiter for TokenBucketLimiter {
         }
     }
 
-    fn rate_pps(&self) -> u64 {
+    fn uv_rate_pps(&self) -> u64 {
         self.pps
     }
 }

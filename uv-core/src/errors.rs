@@ -1,8 +1,10 @@
 use thiserror::Error;
 use serde::{Serialize, Deserialize};
+use anyhow;
 
 
-#[derive(Debug, Error, Serialize, Deserialize)]
+
+#[derive(Debug, Error)]
 #[serde(tag = "type", content = "data")] // For JSON-Serialize Errors
 pub enum UvErrors {
     // Net Errors
@@ -29,9 +31,40 @@ pub enum UvErrors {
 
     #[error("Configuration error: {0}")]
     Config(String),
+
+    // error.rs files
+    #[error("DNS resolution failed: {0}")]
+    Dns(String),
+
+    #[error("Invalid address: {0}")]
+    InvalidAddress(String),
+
+    #[error("Invalid port range: {0}")]
+    InvalidPortRange(String),
+
+    #[error("Rate limiter overflow: requested {requested}, burst cap {cap}")]
+    RateOverflow { requested: u32, cap: u64 },
+
+    #[error("FFI error: {0}")]
+    Ffi(String),
+
+    #[error("Scan aborted: {0}")]
+    Aborted(String),
+
+    #[error("Unsupported platform: {0}")]
+    UnsupportedPlatform(String),
+
+    #[error("Unsupported: {0}")]
+    Unsupported(String),
+
+    #[error("Permission denied: {0}")]
+    Permission(String),
+
+    #[error("{0}")]
+    Other(#[from] anyhow::Error),
 }
 
-#[derive(Debug, Error, Serialize, Deserialize)]
+#[derive(Debug, Error)]
 pub enum NetworkError {
     #[error("Permission denied (requires root/cap_net_raw)")]
     PermissionDenied,
@@ -47,7 +80,7 @@ pub enum NetworkError {
 }
 
 
-#[derive(Debug,  Error, Serialize, Deserialize)]
+#[derive(Debug,  Error)]
 pub enum ProtocolError {
     #[error("Malformed packet: {0}")]
     Malformed(String),
@@ -57,7 +90,7 @@ pub enum ProtocolError {
 }
 
 
-#[derive(Debug, Error, Serialize, Deserialize)]
+#[derive(Debug, Error)]
 pub enum ScriptError {
     #[error("Syntax error: {0}")]
     Syntax(String),

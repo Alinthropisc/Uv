@@ -3,23 +3,27 @@ use std::str::FromStr;
 
 /// IP exclusion list — loaded from file or CLI --exclude.
 #[derive(Debug, Default, Clone)]
-pub struct IpExcludeList {
-    entries: Vec<IpExcludeEntry>,
+pub struct UvIpExcludeList {
+    entries: Vec<UvIpExcludeEntry>,
 }
 
 #[derive(Debug, Clone)]
-enum IpExcludeEntry {
+enum UvIpExcludeEntry {
     Single(IpAddr),
-    CidrV4 { base: u32, mask: u32 },
+
+    CidrV4 {
+        base: u32,
+        mask: u32
+    },
 }
 
-impl IpExcludeList {
-    pub fn new() -> Self {
+impl UvIpExcludeList {
+    pub fn uv_new() -> Self {
         Self::default()
     }
 
     /// Add a single IP or CIDR range ("192.168.1.0/24" or "10.0.0.1").
-    pub fn add(&mut self, s: &str) -> Result<(), String> {
+    pub fn uv_add(&mut self, s: &str) -> Result<(), String> {
         if let Some((addr_s, prefix_s)) = s.split_once('/') {
             let prefix: u8 = prefix_s.parse().map_err(|_| format!("bad prefix: {s}"))?;
             let addr = Ipv4Parse::parse(addr_s).ok_or_else(|| format!("bad IP: {s}"))?;
@@ -28,19 +32,19 @@ impl IpExcludeList {
             } else {
                 !0u32 << (32 - prefix)
             };
-            self.entries.push(IpExcludeEntry::CidrV4 {
+            self.entries.push(UvIpExcludeEntry::CidrV4 {
                 base: addr & mask,
                 mask,
             });
         } else {
             let addr = IpAddr::from_str(s).map_err(|e| e.to_string())?;
-            self.entries.push(IpExcludeEntry::Single(addr));
+            self.entries.push(UvIpExcludeEntry::Single(addr));
         }
         Ok(())
     }
 
     /// Load from a file (one entry per line, # comments ignored).
-    pub fn from_file(path: &str) -> std::io::Result<Self> {
+    pub fn uv_from_file(path: &str) -> std::io::Result<Self> {
         let content = std::fs::read_to_string(path)?;
         let mut list = Self::new();
         for line in content.lines() {
@@ -53,7 +57,7 @@ impl IpExcludeList {
         Ok(list)
     }
 
-    pub fn contains(&self, ip: IpAddr) -> bool {
+    pub fn uv_contains(&self, ip: IpAddr) -> bool {
         for entry in &self.entries {
             match entry {
                 IpExcludeEntry::Single(a) => {
@@ -74,24 +78,24 @@ impl IpExcludeList {
         false
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub fn uv_is_empty(&self) -> bool {
         self.entries.is_empty()
     }
 }
 
 /// Port exclusion list — comma-separated ports and ranges.
 #[derive(Debug, Default, Clone)]
-pub struct PortExcludeList {
+pub struct UvPortExcludeList {
     ranges: Vec<(u16, u16)>, // inclusive [start, end]
 }
 
-impl PortExcludeList {
-    pub fn new() -> Self {
+impl UvPortExcludeList {
+    pub fn uv_new() -> Self {
         Self::default()
     }
 
     /// Parse "80,443,8000-8080".
-    pub fn parse(s: &str) -> Self {
+    pub fn uv_parse(s: &str) -> Self {
         let mut list = Self::new();
         for part in s.split(',') {
             let part = part.trim();
@@ -106,24 +110,25 @@ impl PortExcludeList {
         list
     }
 
-    pub fn contains(&self, port: u16) -> bool {
+    pub fn uv_contains(&self, port: u16) -> bool {
         self.ranges.iter().any(|(s, e)| port >= *s && port <= *e)
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub fn uv_is_empty(&self) -> bool {
         self.ranges.is_empty()
     }
 }
 
 // --- minimal IPv4 parser to avoid dep on std::net::Ipv4Addr's FromStr error type ---
-struct Ipv4Parse;
-impl Ipv4Parse {
-    fn parse(s: &str) -> Option<u32> {
+struct UvIpv4Parse;
+impl UvIpv4Parse {
+    fn uv_parse(s: &str) -> Option<u32> {
         let mut parts = s.split('.');
         let a: u32 = parts.next()?.parse().ok()?;
         let b: u32 = parts.next()?.parse().ok()?;
         let c: u32 = parts.next()?.parse().ok()?;
         let d: u32 = parts.next()?.parse().ok()?;
+
         if parts.next().is_some() {
             return None;
         }
@@ -139,16 +144,16 @@ mod tests {
     fn cidr_exclude() {
         let mut list = IpExcludeList::new();
         list.add("192.168.1.0/24").unwrap();
-        assert!(list.contains("192.168.1.50".parse().unwrap()));
-        assert!(!list.contains("192.168.2.1".parse().unwrap()));
+        assert!(list.uv_contains("192.168.1.50".parse().unwrap()));
+        assert!(!list.uv_contains("192.168.2.1".parse().unwrap()));
     }
 
     #[test]
     fn port_exclude_range() {
-        let list = PortExcludeList::parse("80,8000-8080,443");
-        assert!(list.contains(80));
-        assert!(list.contains(443));
-        assert!(list.contains(8042));
-        assert!(!list.contains(9000));
+        let list = UvPortExcludeList::parse("80,8000-8080,443");
+        assert!(list.uv_contains(80));
+        assert!(list.uv_contains(443));
+        assert!(list.uv_contains(8042));
+        assert!(!list.uv_contains(9000));
     }
 }

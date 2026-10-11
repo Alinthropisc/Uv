@@ -1,9 +1,9 @@
 // Port range parsing: "22,80,443,8000-9000,top100"
 
-use crate::top::top_ports;
+use crate::top::uv_top_ports;
 
 #[derive(Debug, Clone)]
-pub enum PortRange {
+pub enum UvPortRange {
     Single(u16),
     Range(u16, u16),
     TopN(usize),
@@ -12,7 +12,7 @@ pub enum PortRange {
 
 /// Parse a port spec string into a sorted, deduplicated Vec<u16>.
 /// Accepts: "22,80,443", "1-1024", "top100", "top1000", "-" (all ports).
-pub fn parse_port_spec(spec: &str) -> Vec<u16> {
+pub fn uv_parse_port_spec(spec: &str) -> Vec<u16> {
     let mut ports: Vec<u16> = Vec::new();
     for part in spec.split(',') {
         let part = part.trim();

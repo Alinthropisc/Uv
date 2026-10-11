@@ -1,0 +1,27 @@
+[package]
+name = "uv-lynx"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+uv-core = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tokio = { version = "1", features = ["full"] }
+tokio-rustls = "0.26"
+rustls = "0.23"
+rustls-pemfile = "2"
+rcgen = "0.13"
+webpki-roots = "0.26"
+async-trait = "0.1"
+clap = { version = "4", features = ["derive"] }
+md-5 = "0.10"
+rand = "0.8"
+socket2 = { version = "0.5", features = ["all"] }
+ipnet = "2"
+bytes = "1"
+futures = "0.3"
+
+[dev-dependencies]
+tokio-test = "0.4"

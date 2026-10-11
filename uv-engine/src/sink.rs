@@ -1,20 +1,21 @@
 use std::collections::HashMap;
 use std::net::IpAddr;
 use std::time::Instant;
-use uv_core::traits::ResultSink;
-use uv_core::types::port::PortState;
-use uv_core::types::result::{HostResult, ProbeResult, ScanResult};
 
-pub struct MemorySink {
-    hosts: HashMap<IpAddr, HostResult>,
+use uv_core::traits::UvResultSink;
+use uv_core::types::port::UvPortState;
+use uv_core::types::result::{UvHostResult, UvProbeResult, UvScanResult};
+
+pub struct UvMemorySink {
+    hosts: HashMap<IpAddr, UvHostResult>,
     total_probes: u64,
     packets_sent: u64,
     packets_recv: u64,
     started: Instant,
 }
 
-impl MemorySink {
-    pub fn new() -> Self {
+impl UvMemorySink {
+    pub fn uv_new() -> Self {
         Self {
             hosts: HashMap::new(),
             total_probes: 0,
@@ -24,35 +25,32 @@ impl MemorySink {
         }
     }
 
-    pub fn inc_sent(&mut self) {
+    pub fn uv_inc_sent(&mut self) {
         self.packets_sent += 1;
     }
-    pub fn inc_recv(&mut self) {
+    pub fn uv_inc_recv(&mut self) {
         self.packets_recv += 1;
     }
 }
 
-impl Default for MemorySink {
+impl Default for UvMemorySink {
     fn default() -> Self {
-        Self::new()
+        Self::uv_new()
     }
 }
 
-impl ResultSink for MemorySink {
-    fn push(&mut self, result: ProbeResult, host: IpAddr) {
+impl UvResultSink for UvMemorySink {
+    fn uv_push(&mut self, result: UvProbeResult, host: IpAddr) {
         self.total_probes += 1;
-        if result.state == PortState::Open {
+        
+        if result.state == UvPortState::Open {
             self.packets_recv += 1;
         }
-        self.hosts
-            .entry(host)
-            .or_insert_with(|| HostResult::new(host))
-            .ports
-            .push(result);
+        self.hosts.entry(host).or_insert_with(|| UvHostResult::uv_new(host)).ports.push(result);
     }
 
-    fn finalize(self) -> ScanResult {
-        ScanResult {
+    fn uv_finalize(self) -> UvScanResult {
+        UvScanResult {
             hosts: self.hosts.into_values().collect(),
             duration_ms: self.started.elapsed().as_millis() as u64,
             total_probes: self.total_probes,
