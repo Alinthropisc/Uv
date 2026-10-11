@@ -1,0 +1,52 @@
+[workspace]
+members = [
+    "uv-core",
+    "uv-engine",
+    "uv-support",
+    "uv-crypto",
+    "uv-net",
+    "uv-proto",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+repository = "https://github.com/Alinthropisc/Zeus"
+keywords = ["security", "pentesting", "network", "authentication", "research"]
+categories = ["network-programming", "command-line-utilities"]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json", "fmt"] }
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+config = { version = "0.15", features = ["toml"] }
+async-trait = "0.1"
+clap = { version = "4", features = ["derive", "env"] }
+ratatui = "0.30"
+crossterm = "0.29"
+futures = "0.3"
+tokio-stream = "0.1"
+rand = "0.10"
+chrono = { version = "0.4", features = ["serde"] }
+tonic = "0.14"
+prost = "0.14"
+tokio-rustls = "0.26"
+
+[[bin]]
+name = "uv"
+path = "src/main.rs"
+
+
+[package]
+name = "uv"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+
+
