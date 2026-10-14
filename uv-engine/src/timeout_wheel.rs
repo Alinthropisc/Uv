@@ -5,10 +5,10 @@
 use std::collections::VecDeque;
 use std::time::{Duration, Instant};
 
-type TimerId = u64;
+type UvTimerId = u64;
 
-pub struct TimerEntry {
-    pub id: TimerId,
+pub struct UvTimerEntry {
+    pub id: UvTimerId,
     pub expires_at: Instant,
     pub data: Box<dyn std::any::Any + Send>,
 }
@@ -23,10 +23,10 @@ pub struct TimeoutWheel {
     next_id: TimerId,
 }
 
-impl TimeoutWheel {
+impl UvTimeoutWheel {
     /// Create a wheel with `slot_count` slots and `tick_ms` milliseconds per slot.
     /// Total range = slot_count * tick_ms milliseconds.
-    pub fn new(slot_count: usize, tick_ms: u64) -> Self {
+    pub fn uv_new(slot_count: usize, tick_ms: u64) -> Self {
         let mut slots = Vec::with_capacity(slot_count);
         for _ in 0..slot_count {
             slots.push(VecDeque::new());
@@ -42,14 +42,9 @@ impl TimeoutWheel {
     }
 
     /// Insert a timer that fires after `delay`. Returns a TimerId for cancellation.
-    pub fn insert<T: std::any::Any + Send + 'static>(
-        &mut self,
-        delay: Duration,
-        data: T,
-    ) -> TimerId {
+    pub fn uv_insert<T: std::any::Any + Send + 'static>(&mut self, delay: Duration, data: T) -> UvTimerId {
         let id = self.next_id;
         self.next_id += 1;
-
         let ticks = (delay.as_millis() as u64 / self.tick_ms).max(1) as usize;
         let slot = (self.current_slot + ticks) % self.slot_count;
         let expires_at = Instant::now() + delay;
@@ -59,12 +54,11 @@ impl TimeoutWheel {
             expires_at,
             data: Box::new(data),
         });
-
         id
     }
 
     /// Cancel a timer by id. Returns true if found and removed.
-    pub fn cancel(&mut self, id: TimerId) -> bool {
+    pub fn uv_cancel(&mut self, id: UvTimerId) -> bool {
         for slot in &mut self.slots {
             if let Some(pos) = slot.iter().position(|e| e.id == id) {
                 slot.remove(pos);
@@ -76,19 +70,18 @@ impl TimeoutWheel {
 
     /// Advance the wheel and collect all expired timers.
     /// Call this regularly (e.g. every tick_ms milliseconds).
-    pub fn tick(&mut self) -> Vec<TimerEntry> {
+    pub fn uv_tick(&mut self) -> Vec<TimerEntry> {
         let now = Instant::now();
         let elapsed_ms = now.duration_since(self.last_tick).as_millis() as u64;
         let ticks_to_advance = (elapsed_ms / self.tick_ms) as usize;
-
         let mut expired = Vec::new();
 
         for _ in 0..ticks_to_advance.min(self.slot_count) {
             self.current_slot = (self.current_slot + 1) % self.slot_count;
             let slot = &mut self.slots[self.current_slot];
-
             // Drain entries that have actually expired
             let mut remaining = VecDeque::new();
+
             while let Some(entry) = slot.pop_front() {
                 if entry.expires_at <= now {
                     expired.push(entry);
@@ -102,12 +95,11 @@ impl TimeoutWheel {
         if ticks_to_advance > 0 {
             self.last_tick = now;
         }
-
         expired
     }
 
     /// Returns the number of pending timers.
-    pub fn pending(&self) -> usize {
+    pub fn uv_pending(&self) -> usize {
         self.slots.iter().map(|s| s.len()).sum()
     }
 }

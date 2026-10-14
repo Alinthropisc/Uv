@@ -1635,3 +1635,1251 @@ events:
         
       exitCode: 1
 ...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      /usr/bin/ld: Error: unable to disambiguate: -nologo (did you mean --nologo ?)
+      clang-cl-22: error: linker command failed with exit code 1 (use -v to see invocation)
+      
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+      
+      The C compiler identification is Clang, found in:
+        /home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/4.3.2/CompilerIdC/CMakeCCompilerId.obj
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:1347 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:250 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Detecting C compiler /showIncludes prefix:
+        Note: including file: ./foo.h
+        
+      Found prefix "Note: including file: "
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:103 (__resolve_linker_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/sayavdera/.bun/bin/"
+      - "/home/sayavdera/develop/flutter/bin/"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/home/sayavdera/.deno/bin/"
+      - "/home/sayavdera/.cargo/bin/"
+      - "/home/sayavdera/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/"
+      - "/usr/local/go/bin/"
+      - "/home/sayavdera/go/bin/"
+    found: "/usr/bin/link"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/sayavdera/.bun/bin/"
+      - "/home/sayavdera/develop/flutter/bin/"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/home/sayavdera/.deno/bin/"
+      - "/home/sayavdera/.cargo/bin/"
+      - "/home/sayavdera/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/"
+      - "/usr/local/go/bin/"
+      - "/home/sayavdera/go/bin/"
+    searched_directories:
+      - "/usr/bin/lld-link"
+      - "/home/sayavdera/.bun/bin/lld-link"
+      - "/home/sayavdera/develop/flutter/bin/lld-link"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/sbin/lld-link"
+      - "/usr/local/bin/lld-link"
+      - "/home/sayavdera/.deno/bin/lld-link"
+      - "/home/sayavdera/.cargo/bin/lld-link"
+      - "/home/sayavdera/.local/bin/lld-link"
+      - "/usr/local/sbin/lld-link"
+      - "/usr/sbin/lld-link"
+      - "/sbin/lld-link"
+      - "/bin/lld-link"
+      - "/usr/games/lld-link"
+      - "/usr/local/games/lld-link"
+      - "/snap/bin/lld-link"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/lld-link"
+      - "/usr/local/go/bin/lld-link"
+      - "/home/sayavdera/go/bin/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      /usr/bin/ld: Error: unable to disambiguate: -nologo (did you mean --nologo ?)
+      clang-cl-22: error: linker command failed with exit code 1 (use -v to see invocation)
+      
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.obj"
+      
+      The CXX compiler identification is Clang, found in:
+        /home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/4.3.2/CompilerIdCXX/CMakeCXXCompilerId.obj
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:1347 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:250 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Detecting CXX compiler /showIncludes prefix:
+        Note: including file: ./foo.h
+        
+      Found prefix "Note: including file: "
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/sayavdera/.bun/bin/"
+      - "/home/sayavdera/develop/flutter/bin/"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/home/sayavdera/.deno/bin/"
+      - "/home/sayavdera/.cargo/bin/"
+      - "/home/sayavdera/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/"
+      - "/usr/local/go/bin/"
+      - "/home/sayavdera/go/bin/"
+    searched_directories:
+      - "/usr/bin/lld-link"
+      - "/home/sayavdera/.bun/bin/lld-link"
+      - "/home/sayavdera/develop/flutter/bin/lld-link"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/sbin/lld-link"
+      - "/usr/local/bin/lld-link"
+      - "/home/sayavdera/.deno/bin/lld-link"
+      - "/home/sayavdera/.cargo/bin/lld-link"
+      - "/home/sayavdera/.local/bin/lld-link"
+      - "/usr/local/sbin/lld-link"
+      - "/usr/sbin/lld-link"
+      - "/sbin/lld-link"
+      - "/bin/lld-link"
+      - "/usr/games/lld-link"
+      - "/usr/local/games/lld-link"
+      - "/snap/bin/lld-link"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/lld-link"
+      - "/usr/local/go/bin/lld-link"
+      - "/home/sayavdera/go/bin/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-bej1XQ"
+      binary: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-bej1XQ"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-22"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_C_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-bej1XQ'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_7baea
+        [1/2] /usr/bin/clang-cl-22 -D_MBCS   -o CMakeFiles/cmTC_7baea.dir/CMakeCCompilerABI.c.o -c /opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerABI.c
+        FAILED: CMakeFiles/cmTC_7baea.dir/CMakeCCompilerABI.c.o 
+        /usr/bin/clang-cl-22 -D_MBCS   -o CMakeFiles/cmTC_7baea.dir/CMakeCCompilerABI.c.o -c /opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerABI.c
+        clang-cl-22: error: no input files
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:56 (try_compile)"
+      - "CMakeLists.txt"
+    checks:
+      - "Check for working C compiler: /usr/bin/clang-cl-22"
+    directories:
+      source: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-RAbCJQ"
+      binary: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-RAbCJQ"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-22"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_C_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_COMPILER_WORKS"
+      cached: true
+      stdout: |
+        Change Dir: '/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-RAbCJQ'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_df116
+        [1/2] /usr/bin/clang-cl-22 -D_MBCS   -o CMakeFiles/cmTC_df116.dir/testCCompiler.c.o -c /home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-RAbCJQ/testCCompiler.c
+        [2/2] : && /usr/bin/clang-cl-22   CMakeFiles/cmTC_df116.dir/testCCompiler.c.o -o cmTC_df116   && :
+        FAILED: cmTC_df116 
+        : && /usr/bin/clang-cl-22   CMakeFiles/cmTC_df116.dir/testCCompiler.c.o -o cmTC_df116   && :
+        /usr/bin/ld: Error: unable to disambiguate: -nologo (did you mean --nologo ?)
+        clang-cl-22: error: linker command failed with exit code 1 (use -v to see invocation)
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+...
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      /usr/bin/ld: Error: unable to disambiguate: -nologo (did you mean --nologo ?)
+      clang-cl-22: error: linker command failed with exit code 1 (use -v to see invocation)
+      
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+      
+      The C compiler identification is Clang, found in:
+        /home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/4.3.2/CompilerIdC/CMakeCCompilerId.obj
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:1347 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:250 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Detecting C compiler /showIncludes prefix:
+        Note: including file: ./foo.h
+        
+      Found prefix "Note: including file: "
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:103 (__resolve_linker_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/sayavdera/.bun/bin/"
+      - "/home/sayavdera/develop/flutter/bin/"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/home/sayavdera/.deno/bin/"
+      - "/home/sayavdera/.cargo/bin/"
+      - "/home/sayavdera/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/"
+      - "/usr/local/go/bin/"
+      - "/home/sayavdera/go/bin/"
+    found: "/usr/bin/link"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/sayavdera/.bun/bin/"
+      - "/home/sayavdera/develop/flutter/bin/"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/home/sayavdera/.deno/bin/"
+      - "/home/sayavdera/.cargo/bin/"
+      - "/home/sayavdera/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/"
+      - "/usr/local/go/bin/"
+      - "/home/sayavdera/go/bin/"
+    searched_directories:
+      - "/usr/bin/lld-link"
+      - "/home/sayavdera/.bun/bin/lld-link"
+      - "/home/sayavdera/develop/flutter/bin/lld-link"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/sbin/lld-link"
+      - "/usr/local/bin/lld-link"
+      - "/home/sayavdera/.deno/bin/lld-link"
+      - "/home/sayavdera/.cargo/bin/lld-link"
+      - "/home/sayavdera/.local/bin/lld-link"
+      - "/usr/local/sbin/lld-link"
+      - "/usr/sbin/lld-link"
+      - "/sbin/lld-link"
+      - "/bin/lld-link"
+      - "/usr/games/lld-link"
+      - "/usr/local/games/lld-link"
+      - "/snap/bin/lld-link"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/lld-link"
+      - "/usr/local/go/bin/lld-link"
+      - "/home/sayavdera/go/bin/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      /usr/bin/ld: Error: unable to disambiguate: -nologo (did you mean --nologo ?)
+      clang-cl-22: error: linker command failed with exit code 1 (use -v to see invocation)
+      
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/"
+    found: "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /usr/bin/clang-cl-22 
+      Build flags: 
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.obj"
+      
+      The CXX compiler identification is Clang, found in:
+        /home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/4.3.2/CompilerIdCXX/CMakeCXXCompilerId.obj
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:1347 (message)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:250 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt"
+    message: |
+      Detecting CXX compiler /showIncludes prefix:
+        Note: including file: ./foo.h
+        
+      Found prefix "Note: including file: "
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/sayavdera/.bun/bin/"
+      - "/home/sayavdera/develop/flutter/bin/"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/home/sayavdera/.deno/bin/"
+      - "/home/sayavdera/.cargo/bin/"
+      - "/home/sayavdera/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/bin/"
+      - "/usr/games/"
+      - "/usr/local/games/"
+      - "/snap/bin/"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/"
+      - "/usr/local/go/bin/"
+      - "/home/sayavdera/go/bin/"
+    searched_directories:
+      - "/usr/bin/lld-link"
+      - "/home/sayavdera/.bun/bin/lld-link"
+      - "/home/sayavdera/develop/flutter/bin/lld-link"
+      - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/bin/lld-link"
+      - "/home/linuxbrew/.linuxbrew/sbin/lld-link"
+      - "/usr/local/bin/lld-link"
+      - "/home/sayavdera/.deno/bin/lld-link"
+      - "/home/sayavdera/.cargo/bin/lld-link"
+      - "/home/sayavdera/.local/bin/lld-link"
+      - "/usr/local/sbin/lld-link"
+      - "/usr/sbin/lld-link"
+      - "/sbin/lld-link"
+      - "/bin/lld-link"
+      - "/usr/games/lld-link"
+      - "/usr/local/games/lld-link"
+      - "/snap/bin/lld-link"
+      - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts/lld-link"
+      - "/usr/local/go/bin/lld-link"
+      - "/home/sayavdera/go/bin/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/sayavdera/.bun/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+        - "/home/sayavdera/.nvm/versions/node/v24.15.0/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+        - "/usr/local/bin"
+        - "/home/sayavdera/.deno/bin"
+        - "/home/sayavdera/.cargo/bin"
+        - "/home/sayavdera/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/sbin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/bin"
+        - "/usr/games"
+        - "/usr/local/games"
+        - "/snap/bin"
+        - "/snap/bin"
+        - "/home/sayavdera/.local/share/JetBrains/Toolbox/scripts"
+        - "/usr/local/go/bin"
+        - "/home/sayavdera/go/bin"
+        - "/home/sayavdera/develop/flutter/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-gFEewp"
+      binary: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-gFEewp"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-22"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_C_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-gFEewp'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_e94c1
+        [1/2] /usr/bin/clang-cl-22 -D_MBCS   -o CMakeFiles/cmTC_e94c1.dir/CMakeCCompilerABI.c.o -c /opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerABI.c
+        FAILED: CMakeFiles/cmTC_e94c1.dir/CMakeCCompilerABI.c.o 
+        /usr/bin/clang-cl-22 -D_MBCS   -o CMakeFiles/cmTC_e94c1.dir/CMakeCCompilerABI.c.o -c /opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeCCompilerABI.c
+        clang-cl-22: error: no input files
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/cmake-4.3.2/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:56 (try_compile)"
+      - "CMakeLists.txt"
+    checks:
+      - "Check for working C compiler: /usr/bin/clang-cl-22"
+    directories:
+      source: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-EMgZdl"
+      binary: "/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-EMgZdl"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/usr/bin/clang-scan-deps-22"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_C_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_COMPILER_WORKS"
+      cached: true
+      stdout: |
+        Change Dir: '/home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-EMgZdl'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_d43b7
+        [1/2] /usr/bin/clang-cl-22 -D_MBCS   -o CMakeFiles/cmTC_d43b7.dir/testCCompiler.c.o -c /home/sayavdera/Desktop/projects/Tawheed/uv/build/CMakeFiles/CMakeScratch/TryCompile-EMgZdl/testCCompiler.c
+        [2/2] : && /usr/bin/clang-cl-22   CMakeFiles/cmTC_d43b7.dir/testCCompiler.c.o -o cmTC_d43b7   && :
+        FAILED: cmTC_d43b7 
+        : && /usr/bin/clang-cl-22   CMakeFiles/cmTC_d43b7.dir/testCCompiler.c.o -o cmTC_d43b7   && :
+        /usr/bin/ld: Error: unable to disambiguate: -nologo (did you mean --nologo ?)
+        clang-cl-22: error: linker command failed with exit code 1 (use -v to see invocation)
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+...

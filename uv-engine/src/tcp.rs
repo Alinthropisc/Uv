@@ -5,20 +5,21 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::net::TcpStream;
 use tokio::time::timeout;
-use uv_core::error::UvResult;
-use uv_core::traits::{RateLimiter, Scanner};
-use uv_core::types::port::Port;
-use uv_core::types::protocol::Protocol;
-use uv_core::types::result::ProbeResult;
 
-pub struct TcpConnectScanner {
+use uv_core::error::UvResult;
+use uv_core::traits::{UvRateLimiter, UvScanner};
+use uv_core::types::port::UvPort;
+use uv_core::types::protocol::UvProtocol;
+use uv_core::types::result::UvProbeResult;
+
+pub struct UvTcpConnectScanner {
     timeout: Duration,
     concurrency: usize,
-    limiter: Option<Arc<dyn RateLimiter>>,
+    limiter: Option<Arc<dyn UvRateLimiter>>,
 }
 
-impl TcpConnectScanner {
-    pub fn new(timeout_ms: u32) -> Self {
+impl UvTcpConnectScanner {
+    pub fn uv_new(timeout_ms: u32) -> Self {
         Self {
             timeout: Duration::from_millis(timeout_ms as u64),
             concurrency: 512,
@@ -26,29 +27,30 @@ impl TcpConnectScanner {
         }
     }
 
-    pub fn with_concurrency(mut self, n: usize) -> Self {
+    pub fn uv_with_concurrency(mut self, n: usize) -> Self {
         self.concurrency = n;
         self
     }
 
-    pub fn with_limiter(mut self, lim: Arc<dyn RateLimiter>) -> Self {
+    pub fn uv_with_limiter(mut self, lim: Arc<dyn UvRateLimiter>) -> Self {
         self.limiter = Some(lim);
         self
     }
 
-    async fn probe_one(addr: SocketAddr, to: Duration, port: Port) -> ProbeResult {
+    async fn uv_probe_one(addr: SocketAddr, to: Duration, port: Port) -> UvProbeResult {
         let t0 = Instant::now();
+
         match timeout(to, TcpStream::connect(addr)).await {
-            Ok(Ok(_)) => ProbeResult::open(port, Protocol::Tcp, t0.elapsed()),
-            Ok(Err(e)) if is_refused(&e) => ProbeResult::closed(port, Protocol::Tcp),
-            _ => ProbeResult::filtered(port, Protocol::Tcp),
+            Ok(Ok(_)) => UvProbeResult::open(port, UvProtocol::Tcp, t0.elapsed()),
+            Ok(Err(e)) if is_refused(&e) => UvProbeResult::closed(port, UvProtocol::Tcp),
+            _ => UvProbeResult::filtered(port, UvProtocol::Tcp),
         }
     }
 }
 
 #[async_trait]
-impl Scanner for TcpConnectScanner {
-    async fn scan(&self, target: IpAddr, ports: &[Port]) -> UvResult<Vec<ProbeResult>> {
+impl UvScanner for UvTcpConnectScanner {
+    async fn uv_scan(&self, target: IpAddr, ports: &[Port]) -> UvResult<Vec<UvProbeResult>> {
         let mut results = Vec::with_capacity(ports.len());
         let mut tasks: FuturesUnordered<_> = FuturesUnordered::new();
         let to = self.timeout;
@@ -58,9 +60,11 @@ impl Scanner for TcpConnectScanner {
             if let Some(ref lim) = self.limiter {
                 lim.acquire(1)?;
             }
-
             let addr = SocketAddr::new(target, port.get());
-            tasks.push(async move { Self::probe_one(addr, to, port).await });
+
+            tasks.push(async move {
+                Self::probe_one(addr, to, port).await
+            });
 
             // Drain when at concurrency limit
             if tasks.len() >= self.concurrency {
@@ -69,20 +73,18 @@ impl Scanner for TcpConnectScanner {
                 }
             }
         }
-
         // Drain remaining
         while let Some(r) = tasks.next().await {
             results.push(r);
         }
-
         Ok(results)
     }
 
-    fn protocol(&self) -> Protocol {
-        Protocol::Tcp
+    fn uv_protocol(&self) -> UvProtocol {
+        UvProtocol::Tcp
     }
 }
 
-fn is_refused(e: &std::io::Error) -> bool {
+fn uv_is_refused(e: &std::io::Error) -> bool {
     e.kind() == std::io::ErrorKind::ConnectionRefused
 }
